@@ -26,7 +26,8 @@ model Post {
   user          User       @relation(fields: [userId],references: [id])
   title         String
   content       String
-  mood          String
+  mood          String?
+  image         String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }

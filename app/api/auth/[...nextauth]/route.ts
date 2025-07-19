@@ -1,56 +1,45 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import NextAuth from "next-auth"
-import CredentialsProvider from 'next-auth/providers/credentials';
+import NextAuth, { AuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-
 
 const prisma = new PrismaClient();
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-        name: 'Login with email',
-        credentials: {
-          email: { label: 'Email', type: 'text', placeholder: '' },
-          password: { label: 'Password', type: 'password', placeholder: '' },
-        },
-        async authorize(credentials: any) {
-            
-           const email = credentials?.email;
-           const password = credentials?.password;
+      name: "Login with email",
+      credentials: {
+        email: { label: "Email", type: "text", placeholder: "" },
+        password: { label: "Password", type: "password", placeholder: "" },
+      },
+      async authorize(credentials: any) {
+        const email = credentials?.email;
+        const password = credentials?.password;
 
-           if (!email || !password) {
-            return null; 
-          }
+        if (!email || !password) return null;
 
+        const user = await prisma.user.findUnique({ where: { email } });
 
-           const user  = await prisma.user.findUnique({where: {email} })
+        if (!user || !user.password) return null;
 
-           if(!user || !user.password){
-            return null;
-           }
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) return null;
 
-           const hashedPassword = await bcrypt.compare(password,user.password)
-
-           if(!hashedPassword){
-            return null;
-           }
-
-           return {
-            id: user.id.toString(),
-            email: user.email,
-            username: user.username,
-
-           }
-           
-        },
-
-      })
+        return {
+          id: user.id.toString(),
+          email: user.email,
+          username: user.username,
+        };
+      },
+    }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-  }
-})
+  },
+};
 
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
