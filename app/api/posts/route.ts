@@ -65,7 +65,7 @@ export async function GET(req: Request) {
     orderBy: { createdAt: "desc" },
     include: {
       user: {
-        select: { username: true, email: true, avatar: true }
+        select: { username: true, avatar: true }
       }
     }
   });
