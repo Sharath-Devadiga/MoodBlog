@@ -1,24 +1,11 @@
-import { getToken } from "next-auth/jwt";
-import { NextResponse, NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthenticatedUser } from "@/app/lib/utils/auth";
+import { prisma } from "@/app/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-    if (!token?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: token.email }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const { user, error } = await getAuthenticatedUser(req);
+    if (error) return error;
 
     const body = await req.json();
     const { postId, content, parentId } = body;
@@ -34,14 +21,13 @@ export async function POST(req: NextRequest) {
     const comment = await prisma.comment.create({
       data: {
         content,
-        userId: user.id,
+        userId: user!.id,
         postId: parseInt(postId),
         parentId: parentId ? parseInt(parentId) : null,
       },
     });
 
     return NextResponse.json({ message: "Comment created successfully", comment });
-
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

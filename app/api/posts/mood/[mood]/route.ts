@@ -1,15 +1,25 @@
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
+import { MOODS, MoodType } from "@/app/utils/constants";
 
-const prisma = new PrismaClient();
-
-export async function GET(req: NextRequest, context: { params: { mood: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { mood: string } }
+) {
   try {
-    const { mood } = context.params;
+    const moodParam = context.params.mood.toLowerCase();
+
+    const validMood = MOODS.some((mood) => mood.value === moodParam);
+    if (!validMood) {
+      return NextResponse.json(
+        { error: "Invalid mood category" },
+        { status: 404 }
+      );
+    }
 
     const posts = await prisma.post.findMany({
       where: {
-        mood: mood.toLowerCase(), 
+        mood: moodParam as MoodType,
       },
       include: {
         user: {
@@ -25,8 +35,12 @@ export async function GET(req: NextRequest, context: { params: { mood: string } 
       },
     });
 
-    return NextResponse.json({ posts }, { status: 200 });
-  } catch (e) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ posts });
+  } catch (error) {
+    console.error("Error fetching mood posts:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
