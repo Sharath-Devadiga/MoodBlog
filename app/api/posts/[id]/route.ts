@@ -1,135 +1,101 @@
-import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { getAuthenticatedUser } from "@/app/lib/utils/auth";
+import { validatePostId } from "@/app/lib/utils/validation";
+import { prisma } from "@/app/lib/prisma";
 
 export async function GET(req: NextRequest, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const { user, error } = await getAuthenticatedUser(req);
+    if (error) return error;
 
-    if (!token?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const postId = parseInt(context.params.id);
-    if (isNaN(postId)) {
-      return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
+    const { postId, error: validationError } = validatePostId(context.params.id);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     const post = await prisma.post.findUnique({
-      where: {
-        id: postId,
-      },
+      where: { id: postId },
       include: {
         user: {
-          select: {
-            id: true,
-            username: true,
-            avatar: true,
-          },
+          select: { id: true, username: true, avatar: true }
         },
-      },
+        likes: {
+          select: {
+            user: { select: { username: true } }
+          }
+        },
+        comments: {
+          include: {
+            user: {
+              select: { id: true, username: true, avatar: true }
+            }
+          }
+        }
+      }
     });
+
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ post }, { status: 200 });
-
+    return NextResponse.json({ post });
   } catch (e) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function DELETE(req:NextRequest,context: { params: { id: string } }) {
-  try{
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+  try {
+    const { user, error } = await getAuthenticatedUser(req);
+    if (error) return error;
 
-    if (!token?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { postId, error: validationError } = validatePostId(context.params.id);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-     const postId = parseInt(context.params.id);
-    if (isNaN(postId)) {
-      return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: token.email }
-    });
-
-    if(!user){
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-      const existingPost = await prisma.post.findFirst({
-      where: {
-        id: postId,
-        userId: user.id
-      }
+    const existingPost = await prisma.post.findFirst({
+      where: { id: postId, userId: user!.id }
     });
 
     if (!existingPost) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-      await prisma.post.delete({
+    await prisma.post.delete({
       where: { id: postId }
     });
 
-    return NextResponse.json({message: "Post deleted successfully!"}, { status: 200 });
-
-
-  } catch(e){
-      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ message: "Post deleted successfully!" });
+  } catch (e) {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
 export async function PUT(req: NextRequest, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const { user, error } = await getAuthenticatedUser(req);
+    if (error) return error;
 
-    if (!token?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const postId = parseInt(context.params.id);
-    if (isNaN(postId)) {
-      return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: token.email }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const { postId, error: validationError } = validatePostId(context.params.id);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     const body = await req.json();
     const { title, content, mood, image } = body;
 
     const post = await prisma.post.updateMany({
-      where: {
-        id: postId,
-        userId: user.id, 
-      },
-      data: {
-        title,
-        content,
-        mood,
-        image,
-      },
+      where: { id: postId, userId: user!.id },
+      data: { title, content, mood, image }
     });
 
     if (post.count === 0) {
       return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Post updated successfully!" }, { status: 200 });
-
+    return NextResponse.json({ message: "Post updated successfully!" });
   } catch (e) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

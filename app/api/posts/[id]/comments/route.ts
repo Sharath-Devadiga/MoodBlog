@@ -1,14 +1,12 @@
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { validatePostId } from "@/app/lib/utils/validation";
+import { prisma } from "@/app/lib/prisma";
 
-const prisma = new PrismaClient();
-
-export async function GET(req: NextRequest,context: { params: { postId: string } }) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
   try {
-    const postId = parseInt(context.params.postId);
-
-    if (isNaN(postId)) {
-      return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
+    const { postId, error: validationError } = validatePostId(context.params.id);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     const comments = await prisma.comment.findMany({
@@ -41,8 +39,7 @@ export async function GET(req: NextRequest,context: { params: { postId: string }
       },
     });
 
-    return NextResponse.json({ comments }, { status: 200 });
-
+    return NextResponse.json({ comments });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
