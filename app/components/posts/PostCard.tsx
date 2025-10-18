@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { formatDistanceToNow } from 'date-fns';
@@ -97,118 +98,137 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   };
 
   return (
-    <Card className="mb-6">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-              {post.user.avatar ? (
-                <img
-                  src={post.user.avatar}
-                  alt={post.user.username}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <span className="text-sm font-medium">
-                  {post.user.username.charAt(0).toUpperCase()}
-                </span>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
+      <Card className="mb-6 shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <motion.div whileHover={{ scale: 1.08 }} className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
+                {post.user.avatar ? (
+                  <img
+                    src={post.user.avatar}
+                    alt={post.user.username}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="text-sm font-medium">
+                    {post.user.username.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </motion.div>
+              <div>
+                <Link 
+                  href={`/profile/${post.user.id}`}
+                  className="font-semibold hover:underline"
+                >
+                  {post.user.username}
+                </Link>
+                <p className="text-sm text-gray-500">
+                  {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              {moodConfig && (
+                <motion.span
+                  className={`px-3 py-1 text-xs rounded-full mood-${moodConfig.value}`}
+                  initial={{ scale: 0.9, opacity: 0.7 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {moodConfig.label}
+                </motion.span>
+              )}
+              {isOwner && (
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowActions(!showActions)}
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                  {showActions && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10"
+                    >
+                      <Link href={`/posts/${post.id}/edit`}>
+                        <button className="flex items-center w-full px-4 py-2 text-sm hover:bg-gray-100">
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </button>
+                      </Link>
+                      <button
+                        onClick={handleDelete}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
               )}
             </div>
-            <div>
-              <Link 
-                href={`/profile/${post.user.id}`}
-                className="font-semibold hover:underline"
-              >
-                {post.user.username}
-              </Link>
-              <p className="text-sm text-gray-500">
-                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-              </p>
-            </div>
           </div>
+        </CardHeader>
 
-          <div className="flex items-center space-x-2">
-            {moodConfig && (
-              <span className={`px-3 py-1 text-xs rounded-full mood-${moodConfig.value}`}>
-                {moodConfig.label}
-              </span>
-            )}
-            
-            {isOwner && (
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowActions(!showActions)}
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-                
-                {showActions && (
-                  <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10">
-                    <Link href={`/posts/${post.id}/edit`}>
-                      <button className="flex items-center w-full px-4 py-2 text-sm hover:bg-gray-100">
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </button>
-                    </Link>
-                    <button
-                      onClick={handleDelete}
-                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent>
-        <Link href={`/posts/${post.id}`}>
-          <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 cursor-pointer">
-            {post.title}
-          </h3>
-        </Link>
-        
-        <p className="text-gray-700 mb-4 line-clamp-3">
-          {post.content}
-        </p>
-
-        {post.image && (
-          <div className="mb-4">
-            <img
-              src={post.image}
-              alt="Post image"
-              className="w-full max-h-96 object-cover rounded-md"
-            />
-          </div>
-        )}
-
-        <div className="flex items-center space-x-4 pt-4 border-t">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLike}
-            disabled={loading}
-            className={liked ? 'text-red-500' : ''}
-          >
-            <Heart className={`h-4 w-4 mr-1 ${liked ? 'fill-current' : ''}`} />
-            {likeCount}
-          </Button>
-
-          {/* Updated: Direct link to comments page */}
-          <Link href={`/posts/${post.id}/comments`}>
-            <Button variant="ghost" size="sm">
-              <MessageCircle className="h-4 w-4 mr-1" />
-              {commentCount > 0 ? commentCount : 'Comments'}
-            </Button>
+        <CardContent>
+          <Link href={`/posts/${post.id}`}>
+            <motion.h3
+              className="text-xl font-semibold mb-2 hover:text-blue-600 cursor-pointer"
+              whileHover={{ scale: 1.04, color: '#2563eb' }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              {post.title}
+            </motion.h3>
           </Link>
-        </div>
-      </CardContent>
-    </Card>
+          <motion.p className="text-gray-700 mb-4 line-clamp-3" initial={{ opacity: 0.8 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+            {post.content}
+          </motion.p>
+
+          {post.image && (
+            <motion.div className="mb-4" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
+              <img
+                src={post.image}
+                alt="Post image"
+                className="w-full max-h-96 object-cover rounded-md"
+              />
+            </motion.div>
+          )}
+
+          <div className="flex items-center space-x-4 pt-4 border-t">
+            <motion.div whileTap={{ scale: 0.92 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLike}
+                disabled={loading}
+                className={liked ? 'text-red-500' : ''}
+              >
+                <Heart className={`h-4 w-4 mr-1 ${liked ? 'fill-current' : ''}`} />
+                {likeCount}
+              </Button>
+            </motion.div>
+            <Link href={`/posts/${post.id}/comments`}>
+              <motion.div whileTap={{ scale: 0.96 }}>
+                <Button variant="ghost" size="sm">
+                  <MessageCircle className="h-4 w-4 mr-1" />
+                  {commentCount > 0 ? commentCount : 'Comments'}
+                </Button>
+              </motion.div>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
