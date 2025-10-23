@@ -70,19 +70,26 @@ export default function CommentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 md:space-y-3">
       <Textarea
         {...register('content', { required: 'Comment cannot be empty' })}
         placeholder={placeholder}
-        className={`min-h-[80px] ${errors.content ? 'border-red-500' : ''}`}
+        className={`min-h-[60px] md:min-h-[80px] text-sm md:text-base ${errors.content ? 'border-red-500' : ''}`}
       />
       {errors.content && (
-        <p className="text-red-500 text-sm">{errors.content.message}</p>
+        <p className="text-red-500 text-xs md:text-sm">{errors.content.message}</p>
       )}
       
-      <Button type="submit" disabled={loading} size="sm">
-        {loading ? 'Posting...' : buttonText}
-      </Button>
+      <div className="flex justify-end">
+        <Button 
+          type="submit" 
+          disabled={loading} 
+          size="sm"
+          className="w-full md:w-auto text-sm"
+        >
+          {loading ? 'Posting...' : buttonText}
+        </Button>
+      </div>
     </form>
   );
 }

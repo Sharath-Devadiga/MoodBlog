@@ -103,11 +103,11 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
-      <Card className="mb-6 shadow-lg hover:shadow-2xl transition-shadow duration-300">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <motion.div whileHover={{ scale: 1.08 }} className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
+      <Card className="mb-4 md:mb-6 shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <CardHeader className="px-3 py-4 md:px-6 md:py-6">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <motion.div whileHover={{ scale: 1.08 }} className="w-8 h-8 md:w-10 md:h-10 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
                 {post.user.avatar ? (
                   <img
                     src={post.user.avatar}
@@ -121,15 +121,17 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
                 )}
               </motion.div>
               <div>
-                <Link 
-                  href={`/profile/${post.user.id}`}
-                  className="font-semibold hover:underline"
-                >
-                  {post.user.username}
-                </Link>
-                <p className="text-sm text-gray-500">
-                  {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-                </p>
+                <div className="flex flex-col">
+                  <Link 
+                    href={`/profile/${post.user.id}`}
+                    className="font-semibold hover:underline text-sm md:text-base"
+                  >
+                    {post.user.username}
+                  </Link>
+                  <p className="text-xs md:text-sm text-gray-500">
+                    {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -181,48 +183,58 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="px-3 py-4 md:px-6 md:py-6">
           <Link href={`/posts/${post.id}`}>
             <motion.h3
-              className="text-xl font-semibold mb-2 hover:text-blue-600 cursor-pointer"
-              whileHover={{ scale: 1.04, color: '#2563eb' }}
+              className="text-lg md:text-xl font-semibold mb-2 hover:text-blue-600 cursor-pointer"
+              whileHover={{ scale: 1.02, color: '#2563eb' }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               {post.title}
             </motion.h3>
           </Link>
-          <motion.p className="text-gray-700 mb-4 line-clamp-3" initial={{ opacity: 0.8 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+          <motion.p 
+            className="text-sm md:text-base text-gray-700 mb-4 line-clamp-3" 
+            initial={{ opacity: 0.8 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ duration: 0.4 }}
+          >
             {post.content}
           </motion.p>
 
           {post.image && (
-            <motion.div className="mb-4" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
+            <motion.div 
+              className="mb-4 -mx-3 md:mx-0" 
+              initial={{ opacity: 0, scale: 0.98 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              transition={{ duration: 0.5 }}
+            >
               <img
                 src={post.image}
                 alt="Post image"
-                className="w-full max-h-96 object-cover rounded-md"
+                className="w-full max-h-[200px] md:max-h-[400px] object-cover md:rounded-md"
               />
             </motion.div>
           )}
 
-          <div className="flex items-center space-x-4 pt-4 border-t">
-            <motion.div whileTap={{ scale: 0.92 }}>
+          <div className="flex items-center justify-between md:justify-start md:space-x-4 pt-4 border-t">
+            <motion.div whileTap={{ scale: 0.92 }} className="flex-1 md:flex-none">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLike}
                 disabled={loading}
-                className={liked ? 'text-red-500' : ''}
+                className={`w-full md:w-auto ${liked ? 'text-red-500' : ''}`}
               >
                 <Heart className={`h-4 w-4 mr-1 ${liked ? 'fill-current' : ''}`} />
-                {likeCount}
+                <span className="text-sm">{likeCount}</span>
               </Button>
             </motion.div>
-            <Link href={`/posts/${post.id}/comments`}>
-              <motion.div whileTap={{ scale: 0.96 }}>
-                <Button variant="ghost" size="sm">
+            <Link href={`/posts/${post.id}/comments`} className="flex-1 md:flex-none">
+              <motion.div whileTap={{ scale: 0.96 }} className="w-full">
+                <Button variant="ghost" size="sm" className="w-full md:w-auto">
                   <MessageCircle className="h-4 w-4 mr-1" />
-                  {commentCount > 0 ? commentCount : 'Comments'}
+                  <span className="text-sm">{commentCount > 0 ? commentCount : 'Comments'}</span>
                 </Button>
               </motion.div>
             </Link>

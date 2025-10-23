@@ -73,14 +73,17 @@ export default function CommentList({
 
   return (
     <Card>
-      <CardHeader className="cursor-pointer" onClick={handleViewAllComments}>
-        <CardTitle className="flex items-center gap-2 hover:text-blue-600 transition-colors">
-          <MessageCircle className="h-5 w-5" />
+      <CardHeader 
+        className="cursor-pointer p-4 md:p-6" 
+        onClick={handleViewAllComments}
+      >
+        <CardTitle className="flex items-center gap-2 hover:text-blue-600 transition-colors text-base md:text-lg">
+          <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
           Comments ({comments.length})
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
+      <CardContent className="p-4 md:p-6">
+        <div className="space-y-4 md:space-y-6">
           {showFullComments && (
             <CommentForm
               postId={postId}
