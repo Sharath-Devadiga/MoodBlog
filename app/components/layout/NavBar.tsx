@@ -33,7 +33,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/home" className="flex items-center space-x-2 group">
               <Image 
-                src="/new.png" 
+                src="/new1.png" 
                 alt="MoodBlog Logo" 
                 width={32} 
                 height={32}
