@@ -54,6 +54,7 @@ export default function SettingsPage() {
       setLoading(true);
       const response = await fetch("/api/users/delete", {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -75,6 +76,7 @@ export default function SettingsPage() {
       setSavingAvatar(true);
       const response = await fetch("/api/users/update-avatar", {
         method: "PUT",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           animalId: selectedAnimal,

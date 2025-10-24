@@ -114,6 +114,7 @@ function CreatePostForm() {
 
     const response = await fetch('/api/upload', {
       method: 'POST',
+      credentials: 'include',
       body: formData,
     });
 
@@ -154,6 +155,7 @@ function CreatePostForm() {
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           content: content.trim() || undefined,
           imageUrl,

@@ -47,6 +47,7 @@ export default function CreateProfilePage() {
     try {
       const response = await fetch('/api/auth/create-profile', {
         method: 'PUT',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ publicUsername: publicUsername.trim() }),
       });
