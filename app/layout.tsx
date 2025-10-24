@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "MoodBlog",
   description: "Express your thoughts through moods.",
   icons: {
-    icon: '/new1.png',
+    icon: '/new3.svg',
   },
 };
 

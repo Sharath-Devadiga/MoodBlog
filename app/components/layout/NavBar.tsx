@@ -31,14 +31,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/home" className="flex items-center space-x-2 group">
-              <Image 
-                src="/new1.png" 
-                alt="MoodBlog Logo" 
-                width={32} 
-                height={32}
-                className="rounded-full transition-transform group-hover:scale-110"
-              />
+            <Link href="/home" className="flex items-center group">
               <span className="text-xl font-bold bg-gradient-to-r from-orange-400 via-rose-400 to-emerald-400 bg-clip-text text-transparent">MoodBlog</span>
             </Link>
           </div>
