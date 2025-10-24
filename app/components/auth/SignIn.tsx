@@ -40,7 +40,18 @@ export default function SignInForm() {
         setLoading(false);
       } else if (result?.ok) {
         toast.success('Welcome back!');
-        router.push('/home');
+        
+        // Wait a moment for session to update, then check if profile exists
+        setTimeout(async () => {
+          const response = await fetch('/api/auth/session');
+          const session = await response.json();
+          
+          if (session?.user?.publicUsername) {
+            router.push('/home');
+          } else {
+            router.push('/create-profile');
+          }
+        }, 500);
       } else {
         toast.error('Something went wrong during sign in');
         setLoading(false);

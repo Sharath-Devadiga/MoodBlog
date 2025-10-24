@@ -19,6 +19,14 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Add cursor pointer to interactive elements */
+button, 
+a, 
+[role="button"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /* Mood Badge Styles */
 .mood-happy {
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
