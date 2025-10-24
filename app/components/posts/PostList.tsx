@@ -57,16 +57,16 @@ export default function PostList({ mood }: PostListProps) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12 md:py-16">
-        <div className="w-10 h-10 border-3 border-orange-500/30 border-t-orange-500 rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center py-12 sm:py-16 lg:py-20">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 border-3 border-orange-500/30 border-t-orange-500 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-12 md:py-16">
-        <p className="text-gray-400 text-sm md:text-base">
+      <div className="text-center py-12 sm:py-16 lg:py-20">
+        <p className="text-gray-400 text-sm sm:text-base">
           {mood ? `No posts found for ${mood} mood` : 'No posts found'}
         </p>
       </div>
@@ -74,7 +74,7 @@ export default function PostList({ mood }: PostListProps) {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 pb-8">
+    <div className="space-y-3 sm:space-y-4 lg:space-y-6 pb-6 sm:pb-8">
       {posts.map((post) => (
         <PostCard
           key={post.id}

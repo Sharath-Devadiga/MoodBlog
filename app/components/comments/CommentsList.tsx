@@ -75,16 +75,16 @@ export default function CommentList({
   return (
     <Card className="bg-zinc-900 border-white/10">
       <CardHeader 
-        className="cursor-pointer p-4 md:p-6" 
+        className="cursor-pointer p-3 sm:p-4 lg:p-6" 
         onClick={!showFullComments ? handleViewAllComments : undefined}
       >
-        <CardTitle className={`flex items-center gap-2 text-base md:text-lg text-white ${!showFullComments ? 'hover:text-orange-400 transition-colors' : ''}`}>
-          <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
+        <CardTitle className={`flex items-center gap-2 text-sm sm:text-base lg:text-lg text-white ${!showFullComments ? 'hover:text-orange-400 transition-colors' : ''}`}>
+          <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
           Comments ({comments.length})
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 md:p-6">
-        <div className="space-y-4 md:space-y-6">
+      <CardContent className="p-3 sm:p-4 lg:p-6">
+        <div className="space-y-3 sm:space-y-4 lg:space-y-6">
           {showFullComments && (
             <CommentForm
               postId={postId}
@@ -93,7 +93,7 @@ export default function CommentList({
           )}
           
           {displayedComments.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {displayedComments.map((comment) => (
                 <CommentItem
                   key={comment.id}
@@ -104,11 +104,11 @@ export default function CommentList({
               ))}
               
               {hasMoreComments && (
-                <div className="text-center pt-4">
+                <div className="text-center pt-3 sm:pt-4">
                   <Button 
                     variant="outline" 
                     onClick={handleViewAllComments}
-                    className="w-full border-white/10 text-gray-300 hover:bg-zinc-800"
+                    className="w-full border-white/10 text-gray-300 hover:bg-zinc-800 text-xs sm:text-sm"
                   >
                     View all {comments.length} comments
                   </Button>
@@ -116,8 +116,8 @@ export default function CommentList({
               )}
             </div>
           ) : (
-            <div className="text-center py-4">
-              <p className="text-gray-400 mb-3">
+            <div className="text-center py-4 sm:py-6">
+              <p className="text-gray-400 mb-3 text-xs sm:text-sm">
                 No comments yet. Be the first to comment!
               </p>
               {!showFullComments && (
@@ -125,7 +125,7 @@ export default function CommentList({
                   variant="outline" 
                   onClick={handleViewAllComments}
                   size="sm"
-                  className="border-white/10 text-gray-300 hover:bg-zinc-800"
+                  className="border-white/10 text-gray-300 hover:bg-zinc-800 text-xs sm:text-sm"
                 >
                   Add Comment
                 </Button>

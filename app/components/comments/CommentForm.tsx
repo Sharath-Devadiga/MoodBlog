@@ -63,21 +63,21 @@ export default function CommentForm({
 
   if (!session) {
     return (
-      <div className="text-center py-4">
-        <p className="text-gray-500">Please sign in to comment</p>
+      <div className="text-center py-3 sm:py-4">
+        <p className="text-gray-500 text-xs sm:text-sm">Please sign in to comment</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 md:space-y-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 sm:space-y-3">
       <Textarea
         {...register('content', { required: 'Comment cannot be empty' })}
         placeholder={placeholder}
-        className={`min-h-[60px] md:min-h-[80px] text-sm md:text-base ${errors.content ? 'border-red-500' : ''}`}
+        className={`min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] text-sm sm:text-base ${errors.content ? 'border-red-500' : ''}`}
       />
       {errors.content && (
-        <p className="text-red-500 text-xs md:text-sm">{errors.content.message}</p>
+        <p className="text-red-500 text-xs sm:text-sm">{errors.content.message}</p>
       )}
       
       <div className="flex justify-end">
@@ -85,7 +85,7 @@ export default function CommentForm({
           type="submit" 
           disabled={loading} 
           size="sm"
-          className="w-full md:w-auto text-sm"
+          className="w-full sm:w-auto text-xs sm:text-sm px-4 sm:px-6"
         >
           {loading ? 'Posting...' : buttonText}
         </Button>

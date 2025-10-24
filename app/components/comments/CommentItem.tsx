@@ -90,41 +90,45 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
 
   return (
     <>
-      <div className={`${depth > 0 ? 'ml-8 pl-4 border-l-2 border-white/10' : ''}`}>
-        <div className="mb-3">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <Avatar 
-                username={comment.user.publicUsername}
-                animalId={comment.user.avatarId}
-                colorIndex={comment.user.colorIndex}
-                size="sm"
-              />
-              <div>
-                <span className="font-medium text-sm text-white">{comment.user.publicUsername}</span>
-                <span className="text-xs text-gray-500 ml-2">
-                  {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
-                </span>
+      <div className={`${depth > 0 ? 'ml-4 sm:ml-6 lg:ml-8 pl-2 sm:pl-3 lg:pl-4 border-l-2 border-white/10' : ''}`}>
+        <div className="mb-3 sm:mb-4">
+          <div className="flex items-start justify-between mb-2 gap-2">
+            <div className="flex items-start gap-2 sm:gap-2.5 flex-1 min-w-0">
+              <div className="flex-shrink-0">
+                <Avatar 
+                  username={comment.user.publicUsername}
+                  animalId={comment.user.avatarId}
+                  colorIndex={comment.user.colorIndex}
+                  size="sm"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2">
+                  <span className="font-medium text-xs sm:text-sm text-white truncate">{comment.user.publicUsername}</span>
+                  <span className="text-xs text-gray-500">
+                    {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                  </span>
+                </div>
               </div>
             </div>
 
             {isOwner && !isEditing && (
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsEditing(true)}
-                  className="h-8 w-8 p-0"
+                  className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                 >
-                  <Edit className="h-3.5 w-3.5" />
+                  <Edit className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowDeleteDialog(true)}
-                  className="h-8 w-8 p-0 hover:text-red-400"
+                  className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:text-red-400"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 </Button>
               </div>
             )}
@@ -140,10 +144,10 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
               <Textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="min-h-[60px]"
+                className="min-h-[60px] text-sm sm:text-base"
               />
-              <div className="flex space-x-2">
-                <Button size="sm" onClick={handleEdit} disabled={loading}>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleEdit} disabled={loading} className="text-xs sm:text-sm">
                   {loading ? 'Saving...' : 'Save'}
                 </Button>
                 <Button
@@ -153,6 +157,7 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
                     setIsEditing(false);
                     setEditContent(comment.content);
                   }}
+                  className="text-xs sm:text-sm"
                 >
                   Cancel
                 </Button>
@@ -160,18 +165,18 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
             </motion.div>
           ) : (
             <>
-              <p className="text-gray-200 mb-2 text-sm leading-relaxed">{comment.content}</p>
+              <p className="text-gray-200 mb-2 text-xs sm:text-sm leading-relaxed break-words">{comment.content}</p>
               
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 {depth < maxDepth && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsReplying(!isReplying)}
-                    className="text-xs text-gray-400 hover:text-white h-auto p-0"
+                    className="text-xs text-gray-400 hover:text-white h-auto p-0 flex items-center gap-1"
                   >
-                    <Reply className="h-3 w-3 mr-1" />
-                    Reply
+                    <Reply className="h-3 w-3" />
+                    <span>Reply</span>
                   </Button>
                 )}
 
@@ -181,17 +186,17 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowReplies(!showReplies)}
-                    className="text-xs text-gray-400 hover:text-white h-auto p-0 flex items-center"
+                    className="text-xs text-gray-400 hover:text-white h-auto p-0 flex items-center gap-1"
                   >
                     {showReplies ? (
                       <>
-                        <ChevronUp className="h-3 w-3 mr-1" />
-                        Hide {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+                        <ChevronUp className="h-3 w-3" />
+                        <span className="hidden xs:inline">Hide </span>{replyCount} {replyCount === 1 ? 'reply' : 'replies'}
                       </>
                     ) : (
                       <>
-                        <ChevronDown className="h-3 w-3 mr-1" />
-                        View {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+                        <ChevronDown className="h-3 w-3" />
+                        <span className="hidden xs:inline">View </span>{replyCount} {replyCount === 1 ? 'reply' : 'replies'}
                       </>
                     )}
                   </Button>

@@ -6,20 +6,20 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Smile, CloudRain, HeartCrack, Zap, Sparkles, PartyPopper, UserX, Laugh, Image as ImageIcon, X } from 'lucide-react';
+import { ArrowLeft, Save, Smile, CloudRain, Angry, Zap, Sparkles, Frown, UserX, Laugh, Image as ImageIcon, X } from 'lucide-react';
 import { Button } from '@/app/components/ui/Button';
 import { Textarea } from '@/app/components/ui/TextArea';
 import { MOODS } from '@/app/utils/constants';
 
-type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'excited' | 'lonely' | 'amused';
+type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'frustrated' | 'lonely' | 'amused';
 
 const moodIcons: Record<Mood, React.ReactNode> = {
   happy: <Smile className="w-6 h-6" />,
   calm: <Sparkles className="w-6 h-6" />,
   anxious: <Zap className="w-6 h-6" />,
   sad: <CloudRain className="w-6 h-6" />,
-  angry: <HeartCrack className="w-6 h-6" />,
-  excited: <PartyPopper className="w-6 h-6" />,
+  angry: <Angry className="w-6 h-6" />,
+  frustrated: <Frown className="w-6 h-6" />,
   lonely: <UserX className="w-6 h-6" />,
   amused: <Laugh className="w-6 h-6" />,
 };
@@ -30,7 +30,7 @@ const moodGradients: Record<Mood, string> = {
   anxious: 'from-purple-400 to-pink-400',
   sad: 'from-blue-400 to-indigo-400',
   angry: 'from-red-400 to-rose-400',
-  excited: 'from-orange-400 to-amber-400',
+  frustrated: 'from-orange-400 to-amber-400',
   lonely: 'from-gray-400 to-gray-500',
   amused: 'from-pink-400 to-rose-400',
 };
@@ -41,7 +41,7 @@ const moodColors: Record<Mood, string> = {
   anxious: 'text-purple-400',
   sad: 'text-blue-400',
   angry: 'text-red-400',
-  excited: 'text-orange-400',
+  frustrated: 'text-orange-400',
   lonely: 'text-gray-400',
   amused: 'text-pink-400',
 };

@@ -7,17 +7,17 @@ import { motion } from 'framer-motion';
 import { 
   Smile, 
   CloudRain, 
-  HeartCrack, 
+  Angry, 
   Zap, 
   Sparkles,
-  PartyPopper,
+  Frown,
   UserX,
   Laugh
 } from 'lucide-react';
 import Navbar from '@/app/components/layout/NavBar';
 import PostList from '@/app/components/posts/PostList';
 
-type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'excited' | 'lonely' | 'amused';
+type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'frustrated' | 'lonely' | 'amused';
 
 interface MoodOption {
   id: Mood;
@@ -64,15 +64,15 @@ const moodOptions: MoodOption[] = [
   {
     id: 'angry',
     label: 'Angry',
-    icon: <HeartCrack className="w-5 h-5" />,
+    icon: <Angry className="w-5 h-5" />,
     gradient: 'from-red-400 to-rose-400',
     color: 'text-red-400',
     bgColor: 'bg-red-500/10',
   },
   {
-    id: 'excited',
-    label: 'Excited',
-    icon: <PartyPopper className="w-5 h-5" />,
+    id: 'frustrated',
+    label: 'Frustrated',
+    icon: <Frown className="w-5 h-5" />,
     gradient: 'from-orange-400 to-amber-400',
     color: 'text-orange-400',
     bgColor: 'bg-orange-500/10',
@@ -110,7 +110,7 @@ export default function MoodDashboardPage() {
   }, [status, session, router]);
 
   useEffect(() => {
-    if (params.mood && ['happy', 'calm', 'anxious', 'sad', 'angry', 'excited', 'lonely', 'amused'].includes(params.mood as string)) {
+    if (params.mood && ['happy', 'calm', 'anxious', 'sad', 'angry', 'frustrated', 'lonely', 'amused'].includes(params.mood as string)) {
       setActiveMood(params.mood as Mood);
     }
   }, [params.mood]);
@@ -134,36 +134,36 @@ export default function MoodDashboardPage() {
 
   return (
     <>
-      <div className="sticky top-0 z-50">
+      <div className="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur-lg shadow-lg">
         <Navbar />
       </div>
 
       <div className="min-h-screen bg-zinc-950 relative">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
-        <div className="hidden lg:block fixed left-4 top-24 z-40 w-56">
+        <div className="hidden xl:block fixed left-2 lg:left-4 top-20 z-40 w-48 lg:w-56">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`p-4 rounded-xl border border-white/20 ${currentMood.bgColor} backdrop-blur-sm`}>
-              <div className={`p-3 bg-gradient-to-br ${currentMood.gradient} rounded-lg mb-3 w-fit`}>
+            <div className={`p-3 lg:p-4 rounded-xl border border-white/20 ${currentMood.bgColor} backdrop-blur-sm`}>
+              <div className={`p-2 lg:p-3 bg-gradient-to-br ${currentMood.gradient} rounded-lg mb-2 lg:mb-3 w-fit`}>
                 <div className="text-white">
                   {currentMood.icon}
                 </div>
               </div>
-              <h2 className="text-lg font-bold text-white mb-1">
+              <h2 className="text-base lg:text-lg font-bold text-white mb-1">
                 {currentMood.label}
               </h2>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-xs lg:text-sm">
                 Mood Dashboard
               </p>
             </div>
           </motion.div>
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-6">
+        <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-8 lg:py-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

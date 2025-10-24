@@ -72,12 +72,12 @@ export default function ProfilePage() {
 
       const data = await response.json();
       setUser(data.user);
-      setPosts(data.posts);
-      setFilteredPosts(data.posts);
+      setPosts(data.posts || []);
+      setFilteredPosts(data.posts || []);
 
       const stats = MOODS.map((mood) => ({
         mood: mood.value,
-        count: data.posts.filter((p: Post) => p.mood === mood.value).length,
+        count: (data.posts || []).filter((p: Post) => p.mood === mood.value).length,
       }));
       setMoodStats(stats);
     } catch (err) {

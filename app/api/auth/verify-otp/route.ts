@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { otpStore } from '@/app/lib/otpStore';
+import { prisma } from '@/app/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,29 +15,30 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase().trim();
     const normalizedOtp = otp.toString().trim();
 
-    const storedData = otpStore.get(normalizedEmail);
+    const verification = await prisma.emailVerification.findFirst({
+      where: {
+        email: normalizedEmail,
+        otp: normalizedOtp,
+        verified: false,
+        expiresAt: {
+          gte: new Date()
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
-    if (!storedData) {
-      return NextResponse.json(
-        { error: 'OTP not found or expired' },
-        { status: 400 }
-      );
+    if (!verification) {
+      return NextResponse.json({ 
+        error: 'Invalid or expired OTP' 
+      }, { status: 400 });
     }
 
-    if (Date.now() > storedData.expiresAt) {
-      otpStore.delete(normalizedEmail);
-      return NextResponse.json(
-        { error: 'OTP has expired' },
-        { status: 400 }
-      );
-    }
-
-    if (storedData.otp !== normalizedOtp) {
-      return NextResponse.json(
-        { error: 'Invalid OTP' },
-        { status: 400 }
-      );
-    }
+    await prisma.emailVerification.update({
+      where: { id: verification.id },
+      data: { verified: true }
+    });
 
     return NextResponse.json({
       message: 'OTP verified successfully',

@@ -7,16 +7,16 @@ import { motion } from 'framer-motion';
 import { 
   Smile, 
   CloudRain, 
-  HeartCrack, 
+  Angry, 
   Zap, 
   Sparkles,
   UserX,
   Laugh,
-  PartyPopper
+  Frown
 } from 'lucide-react';
 import Navbar from '@/app/components/layout/NavBar';
 
-type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'excited' | 'lonely' | 'amused';
+type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'frustrated' | 'lonely' | 'amused';
 
 interface MoodOption {
   id: Mood;
@@ -58,14 +58,14 @@ const moodOptions: MoodOption[] = [
   {
     id: 'angry',
     label: 'Angry',
-    icon: <HeartCrack className="w-8 h-8" />,
+    icon: <Angry className="w-8 h-8" />,
     gradient: 'from-red-400 to-rose-400',
     color: 'text-red-400',
   },
   {
-    id: 'excited',
-    label: 'Excited',
-    icon: <PartyPopper className="w-8 h-8" />,
+    id: 'frustrated',
+    label: 'Frustrated',
+    icon: <Frown className="w-8 h-8" />,
     gradient: 'from-orange-400 to-amber-400',
     color: 'text-orange-400',
   },
@@ -115,10 +115,10 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="sticky top-0 z-50">
+      <div className="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur-lg shadow-lg">
         <Navbar />
       </div>
-      <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 sm:px-6 py-8 sm:py-12 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 sm:px-6 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       
       <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />

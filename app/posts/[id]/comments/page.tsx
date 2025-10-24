@@ -84,13 +84,13 @@ export default function CommentsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-3 sm:p-4 lg:p-6">
         
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Button 
             variant="ghost" 
             onClick={() => router.back()}
-            className="mb-4 text-gray-300 hover:text-white"
+            className="mb-3 sm:mb-4 text-gray-300 hover:text-white text-sm sm:text-base"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Feed
@@ -98,38 +98,38 @@ export default function CommentsPage() {
         </div>
 
         
-        <Card className="mb-6 bg-zinc-900 border-white/10">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-orange-400 to-rose-400 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">
+        <Card className="mb-4 sm:mb-6 bg-zinc-900 border-white/10">
+          <CardHeader className="p-3 sm:p-4 lg:p-6">
+            <div className="flex items-start sm:items-center justify-between gap-2">
+              <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-400 to-rose-400 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs sm:text-sm font-medium text-white">
                     {post.user.publicUsername.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <div>
-                  <p className="font-semibold text-white">{post.user.publicUsername}</p>
-                  <p className="text-sm text-gray-400">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-white text-sm sm:text-base truncate">{post.user.publicUsername}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">
                     {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                   </p>
                 </div>
               </div>
               {moodConfig && (
-                <span className={`px-3 py-1 text-xs rounded-full mood-${moodConfig.value}`}>
+                <span className={`px-2 sm:px-3 py-1 text-xs rounded-full mood-${moodConfig.value} flex-shrink-0`}>
                   {moodConfig.label}
                 </span>
               )}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
             {post.content && (
-              <p className="text-gray-200 mb-3">{post.content}</p>
+              <p className="text-gray-200 mb-3 text-xs sm:text-sm lg:text-base leading-relaxed break-words">{post.content}</p>
             )}
             {post.imageUrl && (
               <img
                 src={post.imageUrl}
                 alt="Post image"
-                className="w-full max-h-[400px] object-cover rounded-md"
+                className="w-full max-h-[300px] sm:max-h-[400px] lg:max-h-[500px] object-contain rounded-md bg-zinc-800/50"
               />
             )}
           </CardContent>

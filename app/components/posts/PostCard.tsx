@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { formatDistanceToNow } from 'date-fns';
 import { Heart, MessageCircle, Edit, Trash2, MoreHorizontal } from 'lucide-react';
@@ -97,14 +98,14 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="w-full max-w-3xl mx-auto"
+      className="w-full max-w-2xl lg:max-w-3xl mx-auto px-2 sm:px-0"
     >
       <Card className="bg-zinc-900 border-white/10 shadow-lg hover:shadow-2xl hover:border-white/20 transition-all duration-300 overflow-hidden">
         
-        <CardHeader className="p-4 md:p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-2.5 md:gap-3">
-              <Link href={`/profile/${post.user.id}`}>
+        <CardHeader className="p-3 sm:p-4 lg:p-5">
+          <div className="flex items-start justify-between gap-2 sm:gap-3">
+            <div className="flex items-start gap-2 sm:gap-2.5 lg:gap-3 flex-1 min-w-0">
+              <Link href={`/profile/${post.user.id}`} className="flex-shrink-0">
                 <Avatar 
                   username={post.user.publicUsername}
                   animalId={post.user.avatarId}
@@ -114,10 +115,10 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
               </Link>
               
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <Link 
                     href={`/profile/${post.user.id}`}
-                    className="font-semibold hover:underline text-sm md:text-base text-white truncate"
+                    className="font-semibold hover:underline text-sm sm:text-base text-white truncate"
                   >
                     {post.user.publicUsername || 'Anonymous'}
                   </Link>
@@ -173,15 +174,15 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         </CardHeader>
 
         
-        <CardContent className="p-4 md:p-5 pt-0">
+        <CardContent className="p-3 sm:p-4 lg:p-5 pt-0">
           {post.content && (
             <motion.div
               initial={{ opacity: 0.8 }} 
               animate={{ opacity: 1 }} 
               transition={{ duration: 0.3 }}
-              className="mb-4"
+              className="mb-3 sm:mb-4"
             >
-              <p className="text-sm md:text-base text-gray-200 leading-relaxed whitespace-pre-wrap break-words">
+              <p className="text-sm sm:text-base text-gray-200 leading-relaxed whitespace-pre-wrap break-words">
                 {post.content}
               </p>
             </motion.div>
@@ -192,30 +193,34 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
               initial={{ opacity: 0, scale: 0.98 }} 
               animate={{ opacity: 1, scale: 1 }} 
               transition={{ duration: 0.4 }}
-              className="mb-4 rounded-lg overflow-hidden bg-zinc-800"
+              className="mb-3 sm:mb-4 rounded-lg sm:rounded-xl overflow-hidden bg-zinc-800/50 relative w-full max-h-[400px] sm:max-h-[500px] lg:max-h-[600px] min-h-[200px]"
             >
-              <img
+              <Image
                 src={post.imageUrl}
                 alt="Post image"
-                className="w-full h-auto max-h-[300px] sm:max-h-[400px] md:max-h-[500px] object-cover"
+                width={1200}
+                height={800}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 60vw"
+                className="w-full h-auto object-contain rounded-lg sm:rounded-xl max-h-[400px] sm:max-h-[500px] lg:max-h-[600px]"
+                priority={false}
               />
             </motion.div>
           )}
 
           
-          <div className="flex items-center gap-2 pt-3 border-t border-white/10">
+          <div className="flex items-center gap-1 sm:gap-2 pt-2 sm:pt-3 border-t border-white/10">
             <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLike}
                 disabled={loading}
-                className={`w-full h-10 md:h-9 justify-center gap-2 ${
+                className={`w-full h-9 sm:h-10 justify-center gap-1.5 sm:gap-2 ${
                   liked ? 'text-red-500 hover:text-red-400' : 'text-gray-400 hover:text-white'
                 }`}
               >
-                <Heart className={`h-4 w-4 md:h-5 md:w-5 ${liked ? 'fill-current' : ''}`} />
-                <span className="text-sm md:text-base font-medium">{likeCount}</span>
+                <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${liked ? 'fill-current' : ''}`} />
+                <span className="text-sm sm:text-base font-medium">{likeCount}</span>
               </Button>
             </motion.div>
             
@@ -224,10 +229,10 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="w-full h-10 md:h-9 justify-center gap-2 text-gray-400 hover:text-white"
+                  className="w-full h-9 sm:h-10 justify-center gap-1.5 sm:gap-2 text-gray-400 hover:text-white"
                 >
-                  <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm md:text-base font-medium">{commentCount > 0 ? commentCount : 'Comment'}</span>
+                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-sm sm:text-base font-medium">{commentCount > 0 ? commentCount : 'Comment'}</span>
                 </Button>
               </motion.div>
             </Link>

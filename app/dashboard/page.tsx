@@ -36,18 +36,18 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-pink-100">
       
-      <div className="sticky top-0 z-30">
+      <div className="sticky top-0 z-50 bg-gradient-to-br from-blue-50/95 to-pink-100/95 backdrop-blur-lg shadow-lg">
         <Navbar />
       </div>
-      <div className="max-w-4xl mx-auto py-6 md:py-10 px-3 md:px-4">
+      <div className="max-w-4xl mx-auto py-6 sm:py-8 lg:py-12 px-3 sm:px-4 lg:px-6">
         <motion.div
-          className="mb-6 md:mb-10 flex flex-col items-center"
+          className="mb-6 sm:mb-8 lg:mb-10 flex flex-col items-center"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <motion.span
-            className="text-3xl md:text-4xl mb-2"
+            className="text-2xl sm:text-3xl lg:text-4xl mb-2"
             initial={{ scale: 0.8, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 200, damping: 10, delay: 0.2 }}
@@ -55,7 +55,7 @@ export default function DashboardPage() {
             👋
           </motion.span>
           <motion.h1
-            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 drop-shadow text-center"
+            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-2 drop-shadow text-center px-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
@@ -63,7 +63,7 @@ export default function DashboardPage() {
             Welcome back, <span className="text-blue-600">{(session.user as any)?.publicUsername}</span>!
           </motion.h1>
           <motion.p
-            className="text-gray-600 text-base md:text-lg text-center px-4"
+            className="text-gray-600 text-sm sm:text-base lg:text-lg text-center px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7 }}

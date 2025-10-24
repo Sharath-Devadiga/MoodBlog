@@ -21,6 +21,25 @@ export async function POST(req: NextRequest) {
       }, { status: 409 })
     }
 
+    const verification = await prisma.emailVerification.findFirst({
+      where: {
+        email,
+        verified: true,
+        expiresAt: {
+          gte: new Date()
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    if (!verification) {
+      return NextResponse.json({ 
+        error: 'Email not verified. Please verify your email first.' 
+      }, { status: 403 })
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await prisma.user.create({
@@ -35,6 +54,10 @@ export async function POST(req: NextRequest) {
         createdAt: true,
       }
     })
+
+    await prisma.emailVerification.deleteMany({
+      where: { email }
+    });
 
     return NextResponse.json({ 
       message: 'User created successfully', 
