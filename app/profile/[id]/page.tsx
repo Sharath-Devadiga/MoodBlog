@@ -130,24 +130,24 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="max-w-4xl mx-auto px-3 md:px-4 py-6 md:py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
         
         <button
           onClick={handleBack}
-          className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          className="mb-4 sm:mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span>Back</span>
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="text-sm sm:text-base">Back</span>
         </button>
 
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-zinc-900 rounded-xl border border-white/10 p-6 mb-6"
+          className="bg-zinc-900 rounded-xl border border-white/10 p-4 sm:p-6 mb-4 sm:mb-6"
         >
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <Avatar 
                 username={user.publicUsername}
                 animalId={user.avatarId}
@@ -156,11 +156,11 @@ export default function ProfilePage() {
               />
               
               <div>
-                <h1 className="text-2xl font-bold text-white mb-1">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1">
                   {user.publicUsername}
                 </h1>
-                <p className="text-gray-400 text-sm flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
+                <p className="text-gray-400 text-xs sm:text-sm flex items-center gap-2">
+                  <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                   Member since {format(new Date(user.createdAt), "MMMM yyyy")}
                 </p>
               </div>
@@ -173,42 +173,42 @@ export default function ProfilePage() {
                 className="p-2 text-gray-400 hover:text-white transition-colors"
                 title="Settings"
               >
-                <Settings className="w-5 h-5" />
+                <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
           </div>
 
           
           {isOwnProfile && (
-            <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/10">
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-orange-400 mb-2">
-                  <TrendingUp className="w-5 h-5" />
+                <div className="flex items-center justify-center gap-2 text-orange-400 mb-1 sm:mb-2">
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="text-2xl font-bold text-white mb-1">
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-white mb-1">
                   {getMostCommonMood()}
                 </div>
-                <div className="text-sm text-gray-400">Most Common Mood</div>
+                <div className="text-xs sm:text-sm text-gray-400">Most Common Mood</div>
               </div>
 
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-rose-400 mb-2">
-                  <FileText className="w-5 h-5" />
+                <div className="flex items-center justify-center gap-2 text-rose-400 mb-1 sm:mb-2">
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="text-2xl font-bold text-white mb-1">
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-white mb-1">
                   {posts.length}
                 </div>
-                <div className="text-sm text-gray-400">Total Posts</div>
+                <div className="text-xs sm:text-sm text-gray-400">Total Posts</div>
               </div>
 
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-purple-400 mb-2">
-                  <Calendar className="w-5 h-5" />
+                <div className="flex items-center justify-center gap-2 text-purple-400 mb-1 sm:mb-2">
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="text-2xl font-bold text-white mb-1">
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-white mb-1">
                   {moodStats.length}
                 </div>
-                <div className="text-sm text-gray-400">Moods Tracked</div>
+                <div className="text-xs sm:text-sm text-gray-400">Moods Tracked</div>
               </div>
             </div>
           )}
@@ -220,15 +220,15 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-zinc-900 rounded-xl border border-white/10 p-6 mb-6"
+            className="bg-zinc-900 rounded-xl border border-white/10 p-4 sm:p-6 mb-4 sm:mb-6"
           >
-            <h2 className="text-lg font-semibold text-white mb-4">
+            <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">
               Filter by Mood
             </h2>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedMood(null)}
-                className={`px-4 py-2 rounded-lg transition-all ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
                   selectedMood === null
                     ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
                     : "bg-zinc-800 text-gray-300 hover:bg-zinc-700"
@@ -242,7 +242,7 @@ export default function ProfilePage() {
                   <button
                     key={stat.mood}
                     onClick={() => setSelectedMood(stat.mood)}
-                    className={`px-4 py-2 rounded-lg transition-all ${
+                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
                       selectedMood === stat.mood
                         ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
                         : "bg-zinc-800 text-gray-300 hover:bg-zinc-700"
@@ -262,14 +262,14 @@ export default function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: isOwnProfile ? 0.2 : 0.1 }}
         >
-          <h2 className="text-xl font-semibold text-white mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
             {isOwnProfile ? "Your Posts" : `${user.publicUsername}'s Posts`}
           </h2>
           
           {filteredPosts.length === 0 ? (
-            <div className="bg-zinc-900 rounded-xl border border-white/10 p-12 text-center">
-              <User className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400">
+            <div className="bg-zinc-900 rounded-xl border border-white/10 p-8 sm:p-12 text-center">
+              <User className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600 mx-auto mb-3 sm:mb-4" />
+              <p className="text-gray-400 text-sm sm:text-base">
                 {selectedMood
                   ? `No ${selectedMood} posts yet`
                   : isOwnProfile
@@ -278,7 +278,7 @@ export default function ProfilePage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-4 md:space-y-6">
+            <div className="space-y-3 sm:space-y-4 md:space-y-6">
               {filteredPosts.map((post, index) => {
                 
                 const transformedPost = {

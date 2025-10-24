@@ -71,13 +71,11 @@ export async function GET(
       
       const likeCount = post._count.likes;
       const commentCount = post._count.comments;
-      const userInteracted = userId ? (post.likes && post.likes.length > 0) || (post.comments && post.comments.length > 0) : false;
       
       const engagementScore = 
         (likeCount * 2) +
         (commentCount * 3) +
-        (userInteracted ? 50 : 0) +
-        (1 / (postAge + 1)) * 20;
+        (1 / (postAge + 1)) * 25;
 
       return {
         ...post,

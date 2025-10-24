@@ -110,36 +110,36 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
             className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-zinc-800"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          <h1 className="text-3xl font-bold text-white">Settings</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Settings</h1>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-zinc-900 rounded-xl border border-white/10 p-6 mb-6"
+          className="bg-zinc-900 rounded-xl border border-white/10 p-4 sm:p-6 mb-4 sm:mb-6"
         >
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-orange-400" />
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" />
             Profile Avatar
           </h2>
           
-          <div className="mb-6">
-            <p className="text-sm text-gray-400 mb-4">
+          <div className="mb-4 sm:mb-6">
+            <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
               Choose an animal avatar or keep your default letter avatar with a unique color!
             </p>
             
             <div className="mb-4">
-              <p className="text-sm font-medium text-gray-300 mb-2">Current Avatar:</p>
-              <div className="flex items-center gap-3 p-3 bg-zinc-800 rounded-lg border border-white/10">
+              <p className="text-xs sm:text-sm font-medium text-gray-300 mb-2">Current Avatar:</p>
+              <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-zinc-800 rounded-lg border border-white/10">
                 <Avatar 
                   username={(session?.user as { publicUsername?: string })?.publicUsername}
                   animalId={selectedAnimal}
@@ -147,7 +147,7 @@ export default function SettingsPage() {
                   size="lg" 
                 />
                 <div>
-                  <p className="text-white font-medium">
+                  <p className="text-sm sm:text-base text-white font-medium">
                     {selectedAnimal ? AVATAR_ANIMALS.find(a => a.id === selectedAnimal)?.name : 'Letter Avatar'}
                   </p>
                   <p className="text-xs text-gray-400">
@@ -157,13 +157,13 @@ export default function SettingsPage() {
               </div>
             </div>
             
-            <p className="text-sm font-medium text-gray-300 mb-3">Choose Animal Avatar:</p>
-            <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 mb-4">
+            <p className="text-xs sm:text-sm font-medium text-gray-300 mb-2 sm:mb-3">Choose Animal Avatar:</p>
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 sm:gap-3 mb-4">
               {AVATAR_ANIMALS.map((animal) => (
                 <button
                   key={animal.id}
                   onClick={() => setSelectedAnimal(animal.id)}
-                  className={`relative group transition-all p-2 rounded-lg ${
+                  className={`relative group transition-all p-1.5 sm:p-2 rounded-lg ${
                     selectedAnimal === animal.id
                       ? "ring-2 ring-orange-500 scale-105 bg-orange-500/10"
                       : "hover:scale-105 hover:bg-white/5"
@@ -177,8 +177,8 @@ export default function SettingsPage() {
                     size="md" 
                   />
                   {selectedAnimal === animal.id && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-orange-500 rounded-full flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -187,25 +187,25 @@ export default function SettingsPage() {
               ))}
             </div>
 
-            <p className="text-sm font-medium text-gray-300 mb-3 mt-6">Choose Background Color:</p>
-            <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 mb-4">
+            <p className="text-xs sm:text-sm font-medium text-gray-300 mb-2 sm:mb-3 mt-4 sm:mt-6">Choose Background Color:</p>
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 sm:gap-3 mb-4">
               {AVATAR_COLORS.map((color, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedColorIndex(index)}
-                  className={`relative group transition-all p-3 rounded-lg ${
+                  className={`relative group transition-all p-2 sm:p-3 rounded-lg ${
                     selectedColorIndex === index
                       ? "ring-2 ring-white scale-105"
                       : "hover:scale-105 opacity-80 hover:opacity-100"
                   }`}
                   title={`Color ${index + 1}`}
                 >
-                  <div className={`${color} w-full h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg`}>
+                  <div className={`${color} w-full h-10 sm:h-12 rounded-lg flex items-center justify-center text-white font-bold text-base sm:text-lg`}>
                     {(session?.user as { publicUsername?: string })?.publicUsername?.charAt(0).toUpperCase() || '?'}
                   </div>
                   {selectedColorIndex === index && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-zinc-900" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-900" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -216,7 +216,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setSelectedAnimal(null)}
-              className={`w-full p-3 rounded-lg border transition-all ${
+              className={`w-full p-2.5 sm:p-3 rounded-lg border transition-all text-sm sm:text-base ${
                 selectedAnimal === null
                   ? "border-orange-500 bg-orange-500/10 text-white"
                   : "border-white/10 hover:border-white/20 text-gray-400 hover:text-white"
@@ -229,7 +229,7 @@ export default function SettingsPage() {
           <Button
             onClick={handleSaveAvatar}
             disabled={savingAvatar || (selectedAnimal === (session?.user as { avatarId?: string })?.avatarId && selectedColorIndex === (session?.user as { colorIndex?: number })?.colorIndex)}
-            className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white"
+            className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white text-sm sm:text-base"
           >
             <Save className="w-4 h-4 mr-2" />
             {savingAvatar ? "Saving..." : "Save Avatar"}
@@ -240,17 +240,17 @@ export default function SettingsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-zinc-900 rounded-xl border border-white/10 p-6 mb-6"
+          className="bg-zinc-900 rounded-xl border border-white/10 p-4 sm:p-6 mb-4 sm:mb-6"
         >
-          <h2 className="text-xl font-semibold text-white mb-4">Account Information</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">Account Information</h2>
           
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-2">
-                <User className="w-4 h-4" />
+              <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-400 mb-2">
+                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Public Username
               </label>
-              <div className="bg-zinc-800 border border-white/10 rounded-lg px-4 py-3 text-gray-300">
+              <div className="bg-zinc-800 border border-white/10 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-gray-300 text-sm sm:text-base">
                 {(session?.user as { publicUsername?: string })?.publicUsername}
               </div>
               <p className="text-xs text-gray-500 mt-1">
@@ -259,11 +259,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-2">
-                <Mail className="w-4 h-4" />
+              <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-400 mb-2">
+                <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Email
               </label>
-              <div className="bg-zinc-800 border border-white/10 rounded-lg px-4 py-3 text-gray-300 blur-sm select-none">
+              <div className="bg-zinc-800 border border-white/10 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-gray-300 blur-sm select-none text-sm sm:text-base">
                 {session?.user?.email}
               </div>
               <p className="text-xs text-gray-500 mt-1">
@@ -278,13 +278,13 @@ export default function SettingsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-zinc-900 rounded-xl border border-red-500/20 p-6"
+          className="bg-zinc-900 rounded-xl border border-red-500/20 p-4 sm:p-6"
         >
-          <h2 className="text-xl font-semibold text-red-400 mb-4">Danger Zone</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-red-400 mb-3 sm:mb-4">Danger Zone</h2>
           
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4">
-            <h3 className="font-semibold text-white mb-2">Delete Account</h3>
-            <p className="text-sm text-gray-400 mb-4">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+            <h3 className="font-semibold text-white mb-2 text-sm sm:text-base">Delete Account</h3>
+            <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
               Once you delete your account, there is no going back. All your posts, comments, 
               and data will be permanently deleted. This action cannot be undone.
             </p>
@@ -292,7 +292,7 @@ export default function SettingsPage() {
             <Button
               onClick={handleDeleteAccount}
               disabled={loading}
-              className="bg-red-500 hover:bg-red-600 text-white"
+              className="bg-red-500 hover:bg-red-600 text-white text-sm sm:text-base"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               {loading ? "Deleting..." : "Delete Account"}

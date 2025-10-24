@@ -118,21 +118,21 @@ export default function HomePage() {
       <div className="sticky top-0 z-50">
         <Navbar />
       </div>
-      <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-8 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 sm:px-6 py-8 sm:py-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
-      <div className="w-full max-w-2xl relative z-10">
+      <div className="w-full max-w-4xl relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="text-center mb-12">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
                 <motion.h1 
-                  className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 px-2"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 }}
@@ -142,7 +142,7 @@ export default function HomePage() {
                   </span>
                 </motion.h1>
                 <motion.p 
-                  className="text-gray-400 text-lg"
+                  className="text-gray-400 text-base sm:text-lg"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
@@ -151,7 +151,7 @@ export default function HomePage() {
                 </motion.p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 {moodOptions.map((mood, index) => (
                   <motion.button
                     key={mood.id}
@@ -161,15 +161,15 @@ export default function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleMoodSelect(mood.id)}
-                    className="group relative bg-zinc-900 border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 hover:shadow-xl"
+                    className="group relative bg-zinc-900 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 hover:border-white/20 transition-all duration-300 hover:shadow-xl"
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${mood.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`} />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${mood.gradient} opacity-0 group-hover:opacity-10 rounded-xl sm:rounded-2xl transition-opacity duration-300`} />
                     
-                    <div className="relative flex flex-col items-center gap-3">
+                    <div className="relative flex flex-col items-center gap-2 sm:gap-3">
                       <div className={`${mood.color} transition-transform duration-300 group-hover:scale-110`}>
                         {mood.icon}
                       </div>
-                      <span className="text-white font-medium text-sm sm:text-base">
+                      <span className="text-white font-medium text-xs sm:text-sm md:text-base">
                         {mood.label}
                       </span>
                     </div>
