@@ -3,12 +3,13 @@ import { getAuthenticatedUser } from "@/app/lib/utils/auth";
 import { validatePostId } from "@/app/lib/utils/validation";
 import { prisma } from "@/app/lib/prisma";
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const { postId, error: validationError } = validatePostId(context.params.id);
+    const params = await context.params;
+    const { postId, error: validationError } = validatePostId(params.id);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
@@ -17,17 +18,17 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
       where: { id: postId },
       include: {
         user: {
-          select: { id: true, username: true, avatar: true }
+          select: { id: true, publicUsername: true, avatarId: true }
         },
         likes: {
           select: {
-            user: { select: { username: true } }
+            user: { select: { publicUsername: true } }
           }
         },
         comments: {
           include: {
             user: {
-              select: { id: true, username: true, avatar: true }
+              select: { id: true, publicUsername: true, avatarId: true }
             }
           }
         }
@@ -45,12 +46,13 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
   }
 }
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const { postId, error: validationError } = validatePostId(context.params.id);
+    const params = await context.params;
+    const { postId, error: validationError } = validatePostId(params.id);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
@@ -73,22 +75,23 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const { postId, error: validationError } = validatePostId(context.params.id);
+    const params = await context.params;
+    const { postId, error: validationError } = validatePostId(params.id);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     const body = await req.json();
-    const { title, content, mood, image } = body;
+    const { title, content, mood, imageUrl } = body;
 
     const post = await prisma.post.updateMany({
       where: { id: postId, userId: user!.id },
-      data: { title, content, mood, image }
+      data: { title, content, mood, imageUrl }
     });
 
     if (post.count === 0) {

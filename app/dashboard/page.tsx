@@ -15,8 +15,13 @@ export default function DashboardPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/signin');
+      return;
     }
-  }, [status, router]);
+    
+    if (status === 'authenticated' && !session?.user?.publicUsername) {
+      router.push('/create-profile');
+    }
+  }, [status, session, router]);
 
   if (status === 'loading') {
     return (
@@ -26,23 +31,23 @@ export default function DashboardPage() {
     );
   }
 
-  if (!session) return null;
+  if (!session || !session.user?.publicUsername) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-pink-100">
-      {/* Sticky Navbar */}
+      
       <div className="sticky top-0 z-30">
         <Navbar />
       </div>
-      <div className="max-w-4xl mx-auto py-10 px-4">
+      <div className="max-w-4xl mx-auto py-6 md:py-10 px-3 md:px-4">
         <motion.div
-          className="mb-10 flex flex-col items-center"
+          className="mb-6 md:mb-10 flex flex-col items-center"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <motion.span
-            className="text-4xl mb-2"
+            className="text-3xl md:text-4xl mb-2"
             initial={{ scale: 0.8, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 200, damping: 10, delay: 0.2 }}
@@ -50,15 +55,15 @@ export default function DashboardPage() {
             👋
           </motion.span>
           <motion.h1
-            className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2 drop-shadow"
+            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 drop-shadow text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
           >
-            Welcome back, <span className="text-blue-600">{(session.user as any)?.username}</span>!
+            Welcome back, <span className="text-blue-600">{session.user?.publicUsername}</span>!
           </motion.h1>
           <motion.p
-            className="text-gray-600 text-lg"
+            className="text-gray-600 text-base md:text-lg text-center px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7 }}

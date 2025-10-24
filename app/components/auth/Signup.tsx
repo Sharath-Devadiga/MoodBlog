@@ -13,7 +13,6 @@ import { authAPI } from '@/app/utils/api';
 
 interface SignUpFormData {
   email: string;
-  username: string;
   password: string;
   confirmPassword: string;
 }
@@ -41,11 +40,10 @@ export default function SignUpForm() {
     try {
       await authAPI.signup({
         email: data.email,
-        username: data.username,
         password: data.password,
       });
       
-      toast.success('Account created successfully!');
+      toast.success('Account created! Please sign in to continue.');
       router.push('/signin');
     } catch (error: any) {
       if (error.response?.status === 409) {
@@ -62,10 +60,8 @@ export default function SignUpForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-4 relative overflow-hidden">
-      {/* Animated Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:3rem_3rem] sm:bg-[size:4rem_4rem]" />
       
-      {/* Gradient Orbs */}
       <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-rose-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
@@ -75,9 +71,7 @@ export default function SignUpForm() {
         transition={{ duration: 0.3 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Card */}
         <div className="bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl p-5 sm:p-6">
-          {/* Header */}
           <div className="text-center mb-5 sm:mb-6">
             <motion.div
               initial={{ scale: 0 }}
@@ -95,9 +89,7 @@ export default function SignUpForm() {
             <p className="text-gray-400 text-xs sm:text-sm">Start your emotional wellness journey</p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-3.5">
-            {/* Email Field */}
             <div className="space-y-1 sm:space-y-1.5">
               <label htmlFor="email" className="text-xs font-medium text-gray-300 flex items-center gap-1.5">
                 <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-orange-400" />
@@ -125,35 +117,6 @@ export default function SignUpForm() {
               )}
             </div>
 
-            {/* Username Field */}
-            <div className="space-y-1 sm:space-y-1.5">
-              <label htmlFor="username" className="text-xs font-medium text-gray-300 flex items-center gap-1.5">
-                <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-400" />
-                Username
-              </label>
-              <Input
-                id="username"
-                {...register('username', {
-                  required: 'Username is required',
-                  minLength: {
-                    value: 3,
-                    message: 'Username must be at least 3 characters'
-                  }
-                })}
-                type="text"
-                placeholder="johndoe"
-                className={`bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-rose-500/50 focus:ring-rose-500/20 py-2 text-sm ${
-                  errors.username ? 'border-red-500' : ''
-                }`}
-              />
-              {errors.username && (
-                <p className="text-red-400 text-xs flex items-center gap-1">
-                  <span>⚠</span> {errors.username.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password Field */}
             <div className="space-y-1 sm:space-y-1.5">
               <label htmlFor="password" className="text-xs font-medium text-gray-300 flex items-center gap-1.5">
                 <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
@@ -181,7 +144,6 @@ export default function SignUpForm() {
               )}
             </div>
 
-            {/* Confirm Password Field */}
             <div className="space-y-1 sm:space-y-1.5">
               <label htmlFor="confirmPassword" className="text-xs font-medium text-gray-300 flex items-center gap-1.5">
                 <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" />
@@ -206,7 +168,6 @@ export default function SignUpForm() {
               )}
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               disabled={loading}

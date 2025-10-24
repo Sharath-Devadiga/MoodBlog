@@ -1,0 +1,347 @@
+'use client';
+
+import { useEffect, useState, useRef } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Save, Smile, CloudRain, HeartCrack, Zap, Sparkles, PartyPopper, UserX, Laugh, Image as ImageIcon, X } from 'lucide-react';
+import { Button } from '@/app/components/ui/Button';
+import { Textarea } from '@/app/components/ui/TextArea';
+import { MOODS, MoodType } from '@/app/utils/constants';
+
+type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'excited' | 'lonely' | 'amused';
+
+const moodIcons: Record<Mood, React.ReactNode> = {
+  happy: <Smile className="w-6 h-6" />,
+  calm: <Sparkles className="w-6 h-6" />,
+  anxious: <Zap className="w-6 h-6" />,
+  sad: <CloudRain className="w-6 h-6" />,
+  angry: <HeartCrack className="w-6 h-6" />,
+  excited: <PartyPopper className="w-6 h-6" />,
+  lonely: <UserX className="w-6 h-6" />,
+  amused: <Laugh className="w-6 h-6" />,
+};
+
+const moodGradients: Record<Mood, string> = {
+  happy: 'from-yellow-400 to-orange-400',
+  calm: 'from-emerald-400 to-teal-400',
+  anxious: 'from-purple-400 to-pink-400',
+  sad: 'from-blue-400 to-indigo-400',
+  angry: 'from-red-400 to-rose-400',
+  excited: 'from-orange-400 to-amber-400',
+  lonely: 'from-gray-400 to-gray-500',
+  amused: 'from-pink-400 to-rose-400',
+};
+
+const moodColors: Record<Mood, string> = {
+  happy: 'text-yellow-400',
+  calm: 'text-emerald-400',
+  anxious: 'text-purple-400',
+  sad: 'text-blue-400',
+  angry: 'text-red-400',
+  excited: 'text-orange-400',
+  lonely: 'text-gray-400',
+  amused: 'text-pink-400',
+};
+
+interface Post {
+  id: string;
+  content: string;
+  imageUrl: string | null;
+  mood: string;
+  user: {
+    id: string;
+  };
+}
+
+export default function EditPostPage() {
+  const params = useParams();
+  const postId = params.id as string;
+  const [content, setContent] = useState('');
+  const [selectedMood, setSelectedMood] = useState<Mood>('happy');
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [fetchingPost, setFetchingPost] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.replace('/signin');
+    } else if (status === 'authenticated' && !session?.user?.publicUsername) {
+      router.replace('/create-profile');
+    } else if (status === 'authenticated') {
+      fetchPost();
+    }
+  }, [status, session, postId]);
+
+  const fetchPost = async () => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`);
+      if (!response.ok) {
+        toast.error('Post not found');
+        router.replace('/home');
+        return;
+      }
+
+      const data = await response.json();
+      const post: Post = data.post;
+
+      
+      if (post.user.id !== (session?.user as any)?.id) {
+        toast.error('You can only edit your own posts');
+        router.replace('/home');
+        return;
+      }
+
+      setContent(post.content || '');
+      setSelectedMood(post.mood as Mood);
+      if (post.imageUrl) {
+        setExistingImageUrl(post.imageUrl);
+        setImagePreview(post.imageUrl);
+      }
+    } catch (error) {
+      toast.error('Failed to load post');
+      router.replace('/home');
+    } finally {
+      setFetchingPost(false);
+    }
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    setSelectedImage(file);
+    setExistingImageUrl(null); 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    setExistingImageUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Failed to upload image');
+    }
+
+    const data = await response.json();
+    return data.url;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!content.trim() && !selectedImage && !existingImageUrl) {
+      toast.error('Please write something or add an image');
+      return;
+    }
+
+    if (content.length > 1000) {
+      toast.error('Post is too long (max 1000 characters)');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let imageUrl: string | null = existingImageUrl;
+
+      if (selectedImage) {
+        setUploading(true);
+        toast.loading('Uploading image...');
+        imageUrl = await uploadImage(selectedImage);
+        toast.dismiss();
+        setUploading(false);
+      }
+
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: content.trim() || undefined,
+          imageUrl,
+          mood: selectedMood,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        toast.error(data.error || 'Failed to update post');
+        return;
+      }
+
+      toast.success('Post updated successfully!');
+      router.push(`/mood-dashboard/${selectedMood}`);
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+      setUploading(false);
+    }
+  };
+
+  if (status === 'loading' || fetchingPost) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+        <div className="w-8 h-8 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const moodCapitalized = selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1);
+
+  return (
+    <div className="min-h-screen bg-zinc-950 px-4 py-8 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+      
+      <div className={`absolute top-0 right-1/4 w-96 h-96 bg-gradient-to-br ${moodGradients[selectedMood]} opacity-10 rounded-full blur-3xl animate-pulse`} />
+
+      <div className="max-w-2xl mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <button
+            onClick={() => router.back()}
+            className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </button>
+
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className={`p-3 bg-gradient-to-br ${moodGradients[selectedMood]} rounded-xl`}>
+                <div className="text-white">
+                  {moodIcons[selectedMood]}
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold">
+                  <span className={moodColors[selectedMood]}>Edit Your Post</span>
+                </h1>
+                <p className="text-gray-400 text-sm">
+                  Currently: {moodCapitalized}
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <Textarea
+                  value={content}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+                  placeholder="What's on your mind? Share your thoughts..."
+                  rows={6}
+                  maxLength={1000}
+                  className="w-full rounded-xl resize-none"
+                  autoFocus
+                />
+                <div className="mt-2 text-right text-sm text-gray-500">
+                  {content.length} / 1000
+                </div>
+              </div>
+
+              
+              <div className="space-y-3">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+
+                {imagePreview ? (
+                  <div className="relative">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-64 object-cover rounded-xl border border-white/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full transition-colors"
+                    >
+                      <X className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full border-2 border-dashed border-white/10 hover:border-white/20 rounded-xl p-8 transition-all duration-300 hover:bg-white/5 group"
+                  >
+                    <div className="flex flex-col items-center gap-3">
+                      <div className={`p-3 bg-gradient-to-br ${moodGradients[selectedMood]} rounded-xl group-hover:scale-110 transition-transform`}>
+                        <ImageIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-white font-medium">Add an image</p>
+                        <p className="text-gray-400 text-sm">Click to upload (max 5MB)</p>
+                      </div>
+                    </div>
+                  </button>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading || uploading || (!content.trim() && !selectedImage && !existingImageUrl)}
+                className="w-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading || uploading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {uploading ? 'Uploading...' : 'Updating...'}
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    Update Post
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

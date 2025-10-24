@@ -8,26 +8,27 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String
-  username  String    @unique
-  bio       String?
-  avatar    String?
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
-  createdAt DateTime  @default(now())
+  id             String    @id @default(uuid())
+  email          String    @unique
+  password       String
+  publicUsername String?   @unique
+  avatarId       String?
+  colorIndex     Int?
+  bio            String?
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+  createdAt      DateTime  @default(now())
 }
 
 model Post {
   id        String    @id @default(uuid())
   userId    String
   user      User      @relation(fields: [userId], references: [id])
-  title     String
-  content   String
+  title     String?
+  content   String?
   mood      String?
-  image     String?
+  imageUrl  String?
   comments  Comment[]
   likes     Like[]
   createdAt DateTime  @default(now())

@@ -39,10 +39,12 @@ export default function ForgotPasswordForm() {
   const handleEmailSubmit = async (data: EmailFormData) => {
     setLoading(true);
     try {
+      const normalizedEmail = data.email.toLowerCase().trim();
+      
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: data.email }),
+        body: JSON.stringify({ email: normalizedEmail }),
       });
 
       const result = await response.json();
@@ -52,10 +54,10 @@ export default function ForgotPasswordForm() {
         return;
       }
 
-      setEmail(data.email);
+      setEmail(normalizedEmail);
       toast.success('OTP sent to your email!');
       
-      // Show OTP in development
+      
       if (result.otp) {
         toast.success(`Development OTP: ${result.otp}`, { duration: 10000 });
       }
@@ -71,10 +73,12 @@ export default function ForgotPasswordForm() {
   const handleOTPSubmit = async (data: OTPFormData) => {
     setLoading(true);
     try {
+      const normalizedOtp = data.otp.trim();
+      
       const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: data.otp }),
+        body: JSON.stringify({ email, otp: normalizedOtp }),
       });
 
       const result = await response.json();
@@ -84,7 +88,7 @@ export default function ForgotPasswordForm() {
         return;
       }
 
-      setOtp(data.otp);
+      setOtp(normalizedOtp);
       toast.success('OTP verified!');
       setStep('newPassword');
     } catch (error) {
@@ -122,7 +126,7 @@ export default function ForgotPasswordForm() {
       toast.success('Password reset successfully!');
       setStep('success');
       
-      // Redirect to signin after 2 seconds
+      
       setTimeout(() => {
         router.push('/signin');
       }, 2000);
@@ -135,10 +139,10 @@ export default function ForgotPasswordForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-4 relative overflow-hidden">
-      {/* Animated Background */}
+      
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:3rem_3rem] sm:bg-[size:4rem_4rem]" />
       
-      {/* Gradient Orbs */}
+      
       <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-rose-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
@@ -148,9 +152,9 @@ export default function ForgotPasswordForm() {
         transition={{ duration: 0.3 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Card */}
+        
         <div className="bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl p-5 sm:p-6">
-          {/* Back Button */}
+          
           <Link
             href="/signin"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4 transition-colors"
@@ -160,7 +164,7 @@ export default function ForgotPasswordForm() {
           </Link>
 
           <AnimatePresence mode="wait">
-            {/* Step 1: Email */}
+            
             {step === 'email' && (
               <motion.div
                 key="email"
@@ -235,7 +239,7 @@ export default function ForgotPasswordForm() {
               </motion.div>
             )}
 
-            {/* Step 2: OTP Verification */}
+            
             {step === 'otp' && (
               <motion.div
                 key="otp"
@@ -320,7 +324,7 @@ export default function ForgotPasswordForm() {
               </motion.div>
             )}
 
-            {/* Step 3: New Password */}
+            
             {step === 'newPassword' && (
               <motion.div
                 key="password"
@@ -418,7 +422,7 @@ export default function ForgotPasswordForm() {
               </motion.div>
             )}
 
-            {/* Step 4: Success */}
+            
             {step === 'success' && (
               <motion.div
                 key="success"

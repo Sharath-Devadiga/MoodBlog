@@ -3,12 +3,13 @@ import { getAuthenticatedUser } from "@/app/lib/utils/auth";
 import { validatePostId } from "@/app/lib/utils/validation";
 import { prisma } from "@/app/lib/prisma";
 
-export async function POST(req: NextRequest, context: { params: { id: string } }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const result = validatePostId(context.params.id);
+    const params = await context.params;
+    const result = validatePostId(params.id);
       if ("error" in result) {
         return NextResponse.json({ error: result.error }, { status: 400 });
       }
@@ -48,15 +49,14 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
   }
 }
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const result = validatePostId(context.params.id);
-      if ("error" in result) {
-        return NextResponse.json({ error: result.error }, { status: 400 });
-      }
-      const postId = result.postId;
-
-
+    const params = await context.params;
+    const result = validatePostId(params.id);
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    const postId = result.postId;
     const { searchParams } = new URL(req.url);
 
     if (searchParams.get("user") === "true") {
@@ -82,8 +82,8 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
           user: {
             select: {
               id: true,
-              username: true,
-              avatar: true,
+              publicUsername: true,
+              avatarId: true,
             },
           },
         },

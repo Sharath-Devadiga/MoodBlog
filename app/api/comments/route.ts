@@ -10,11 +10,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { postId, content, parentId } = body;
 
+
     if (!content || content.trim() === "") {
       return NextResponse.json({ error: "Comment content cannot be empty" }, { status: 400 });
     }
 
-    if (!postId || isNaN(parseInt(postId))) {
+    if (!postId || typeof postId !== 'string' || postId.trim().length === 0) {
       return NextResponse.json({ error: "Invalid or missing postId" }, { status: 400 });
     }
 
@@ -22,8 +23,18 @@ export async function POST(req: NextRequest) {
       data: {
         content,
         userId: user!.id,
-        postId: parseInt(postId),
-        parentId: parentId ? parseInt(parentId) : null,
+        postId: postId,
+        parentId: parentId || null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            publicUsername: true,
+            avatarId: true,
+            colorIndex: true,
+          },
+        },
       },
     });
 

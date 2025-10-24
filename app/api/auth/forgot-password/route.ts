@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
 import crypto from 'crypto';
-
-// Store OTPs temporarily (in production, use Redis or database)
-const otpStore = new Map<string, { otp: string; expiresAt: number }>();
+import { otpStore } from '@/app/lib/otpStore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,9 +14,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user exists
+    const normalizedEmail = email.toLowerCase().trim();
+
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -28,35 +27,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate 6-digit OTP
     const otp = crypto.randomInt(100000, 999999).toString();
     
-    // Store OTP with 10-minute expiration
-    otpStore.set(email, {
+    otpStore.set(normalizedEmail, {
       otp,
-      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+      expiresAt: Date.now() + 10 * 60 * 1000,
     });
 
-    // Send OTP via email using Nodemailer
+    
     if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
       try {
         const nodemailer = require('nodemailer');
         
-        // Create transporter
+        
         const transporter = nodemailer.createTransport({
           host: process.env.SMTP_HOST,
           port: parseInt(process.env.SMTP_PORT || '587'),
-          secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+          secure: process.env.SMTP_SECURE === 'true', 
           auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
           },
         });
 
-        // Send email
+        
         await transporter.sendMail({
           from: process.env.EMAIL_FROM || `"MoodBlog" <${process.env.SMTP_USER}>`,
-          to: email,
+          to: normalizedEmail,
           subject: 'Your Password Reset OTP - MoodBlog',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -104,7 +101,7 @@ If you didn't request this, please ignore this email.
           `,
         });
       } catch (emailError) {
-        // Continue anyway
+        
       }
     }
 
@@ -123,6 +120,3 @@ If you didn't request this, please ignore this email.
     );
   }
 }
-
-// Export the OTP store for verification
-export { otpStore };

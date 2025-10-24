@@ -2,35 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { validatePostId } from "@/app/lib/utils/validation";
 import { prisma } from "@/app/lib/prisma";
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { postId, error: validationError } = validatePostId(context.params.id);
+    const params = await context.params;
+    const { postId, error: validationError } = validatePostId(params.id);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const comments = await prisma.comment.findMany({
+    
+    const allComments = await prisma.comment.findMany({
       where: {
         postId: postId,
-        parentId: null, 
       },
       include: {
         user: {
           select: {
             id: true,
-            username: true,
-            avatar: true,
-          },
-        },
-        replies: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                avatar: true,
-              },
-            },
+            publicUsername: true,
+            avatarId: true,
+            colorIndex: true,
           },
         },
       },
@@ -39,8 +30,33 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
       },
     });
 
-    return NextResponse.json({ comments });
+    
+    const commentMap = new Map();
+    const rootComments: any[] = [];
+
+    
+    allComments.forEach((comment) => {
+      commentMap.set(comment.id, { ...comment, replies: [] });
+    });
+
+    
+    allComments.forEach((comment) => {
+      const commentWithReplies = commentMap.get(comment.id);
+      if (comment.parentId) {
+        const parent = commentMap.get(comment.parentId);
+        if (parent) {
+          parent.replies.push(commentWithReplies);
+        } else {
+          rootComments.push(commentWithReplies);
+        }
+      } else {
+        rootComments.push(commentWithReplies);
+      }
+    });
+
+    return NextResponse.json({ comments: rootComments });
   } catch (error) {
+    console.error('Error fetching comments:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

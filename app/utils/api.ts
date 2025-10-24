@@ -5,10 +5,12 @@ const api = axios.create({
 });
 
 export const authAPI = {
-  signup: (data: { email: string; username: string; password: string }) =>
+  signup: (data: { email: string; password: string }) =>
     api.post('/register/signup', data),
   signin: (data: { email: string; password: string }) =>
     api.post('/auth', data),
+  createProfile: (data: { publicUsername: string }) =>
+    api.put('/auth/create-profile', data),
 };
 
 export const postsAPI = {

@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
+import { validatePostId } from '@/app/lib/utils/validation';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const postId = parseInt(params.id);
+    const params = await context.params;
+    const { postId, error: validationError } = validatePostId(params.id);
     
-    if (isNaN(postId)) {
+    if (validationError) {
       return NextResponse.json(
-        { error: 'Invalid post ID' },
+        { error: validationError },
         { status: 400 }
       );
     }

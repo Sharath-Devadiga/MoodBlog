@@ -46,9 +46,9 @@ export default function CommentForm({
     setLoading(true);
     try {
       await commentsAPI.createComment({
-        postId: parseInt(postId),
+        postId: postId,
         content: data.content,
-        parentId: parentId ? parseInt(parentId) : null
+        parentId: parentId || null
       });
       
       reset();

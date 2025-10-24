@@ -18,3 +18,52 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Mood Badge Styles */
+.mood-happy {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #78350f;
+  font-weight: 600;
+}
+
+.mood-sad {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.mood-angry {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  color: #7f1d1d;
+  font-weight: 600;
+}
+
+.mood-excited {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  color: #7c2d12;
+  font-weight: 600;
+}
+
+.mood-calm {
+  background: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%);
+  color: #064e3b;
+  font-weight: 600;
+}
+
+.mood-anxious {
+  background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+  color: #581c87;
+  font-weight: 600;
+}
+
+.mood-lonely {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.mood-amused {
+  background: linear-gradient(135deg, #f9a8d4 0%, #ec4899 100%);
+  color: #831843;
+  font-weight: 600;
+}

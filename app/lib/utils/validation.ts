@@ -1,24 +1,21 @@
 export function validatePostId(id: string) {
-  const postId = parseInt(id);
-  if (isNaN(postId)) {
+  if (!id || typeof id !== 'string' || id.trim().length === 0) {
     return { error: "Invalid post ID" };
   }
-  return { postId };
+  return { postId: id };
 }
 
 export function validateUserId(id: string) {
-  const userId = parseInt(id);
-  if (isNaN(userId)) {
+  if (!id || typeof id !== 'string' || id.trim().length === 0) {
     return { error: "Invalid user ID" };
   }
-  return { userId };
+  return { userId: id };
 }
 
 export function validateCommentId(id: string) {
-  const commentId = parseInt(id);
-  if (isNaN(commentId)) {
+  if (!id || typeof id !== 'string' || id.trim().length === 0) {
     return { error: "Invalid comment ID" };
   }
-  return { commentId };
+  return { commentId: id };
 }
 

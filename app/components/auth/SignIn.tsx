@@ -37,25 +37,26 @@ export default function SignInForm() {
 
       if (result?.error) {
         toast.error('Invalid email or password. Please check your credentials.');
+        setLoading(false);
       } else if (result?.ok) {
         toast.success('Welcome back!');
-        router.push('/dashboard');
+        router.push('/home');
       } else {
         toast.error('Something went wrong during sign in');
+        setLoading(false);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
-    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-4 relative overflow-hidden">
-      {/* Animated Background */}
+      
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:3rem_3rem] sm:bg-[size:4rem_4rem]" />
       
-      {/* Gradient Orbs */}
+      
       <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
@@ -65,9 +66,9 @@ export default function SignInForm() {
         transition={{ duration: 0.3 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Card */}
+        
         <div className="bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl p-5 sm:p-6">
-          {/* Header */}
+          
           <div className="text-center mb-5 sm:mb-6">
             <motion.div
               initial={{ scale: 0 }}
@@ -85,9 +86,9 @@ export default function SignInForm() {
             <p className="text-gray-400 text-xs sm:text-sm">Continue your emotional journey</p>
           </div>
 
-          {/* Form */}
+          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 sm:space-y-4">
-            {/* Email Field */}
+            
             <div className="space-y-1 sm:space-y-1.5">
               <label htmlFor="email" className="text-xs font-medium text-gray-300 flex items-center gap-1.5">
                 <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" />
@@ -115,7 +116,7 @@ export default function SignInForm() {
               )}
             </div>
 
-            {/* Password Field */}
+            
             <div className="space-y-1 sm:space-y-1.5">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="text-xs font-medium text-gray-300 flex items-center gap-1.5">
@@ -147,7 +148,7 @@ export default function SignInForm() {
               )}
             </div>
 
-            {/* Submit Button */}
+            
             <Button
               type="submit"
               disabled={loading}

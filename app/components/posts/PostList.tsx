@@ -6,17 +6,23 @@ import { postsAPI } from '@/app/utils/api';
 import toast from 'react-hot-toast';
 
 interface Post {
-  id: number;
-  title: string;
-  content: string;
+  id: string;
+  title?: string | null;
+  content?: string | null;
   mood: string;
-  image?: string;
+  imageUrl?: string | null;
   createdAt: string;
   user: {
-    id: number;
-    username: string;
-    avatar?: string;
+    id: string;
+    publicUsername: string | null;
+    avatarId?: string;
+    colorIndex?: number;
   };
+  _count?: {
+    likes: number;
+    comments: number;
+  };
+  isLikedByUser?: boolean;
 }
 
 interface PostListProps {
@@ -45,22 +51,22 @@ export default function PostList({ mood }: PostListProps) {
     }
   };
 
-  const handlePostDelete = (postId: number) => {
+  const handlePostDelete = (postId: string) => {
     setPosts(posts.filter(post => post.id !== postId));
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center py-12 md:py-16">
+        <div className="w-10 h-10 border-3 border-orange-500/30 border-t-orange-500 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">
+      <div className="text-center py-12 md:py-16">
+        <p className="text-gray-400 text-sm md:text-base">
           {mood ? `No posts found for ${mood} mood` : 'No posts found'}
         </p>
       </div>
@@ -68,7 +74,7 @@ export default function PostList({ mood }: PostListProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 pb-8">
       {posts.map((post) => (
         <PostCard
           key={post.id}

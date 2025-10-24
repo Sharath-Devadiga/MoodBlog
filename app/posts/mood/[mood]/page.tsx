@@ -2,16 +2,11 @@
 
 import PostList from '@/app/components/posts/PostList';
 import { MOODS } from '@/app/utils/constants';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
-interface MoodPageProps {
-  params: {
-    mood: string;
-  };
-}
-
-export default function MoodPage({ params }: MoodPageProps) {
-  const moodParam = params.mood.toLowerCase();
+export default function MoodPage() {
+  const params = useParams();
+  const moodParam = (params.mood as string).toLowerCase();
 
   const isValidMood = MOODS.some((m) => m.value === moodParam);
   if (!isValidMood) return notFound();

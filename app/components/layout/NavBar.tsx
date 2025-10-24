@@ -2,15 +2,21 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/app/components/ui/Button';
+import Avatar from '@/app/components/ui/Avatar';
 import { User, LogOut, Plus, Home, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  
+  const currentMood = pathname?.match(/mood-dashboard\/(\w+)/)?.[1] || 'happy';
 
   const handleSignOut = async () => {
     await signOut({ redirect: false });
@@ -22,42 +28,56 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-zinc-900 border-b border-white/10 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <span className="text-2xl">🌈</span>
-              <span className="text-xl font-bold text-gray-900">MoodBlog</span>
+            <Link href="/home" className="flex items-center space-x-2 group">
+              <Image 
+                src="/logo.png" 
+                alt="MoodBlog Logo" 
+                width={32} 
+                height={32}
+                className="rounded-full transition-transform group-hover:scale-110"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-400 via-rose-400 to-emerald-400 bg-clip-text text-transparent">MoodBlog</span>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
+          
+          <div className="hidden md:flex items-center space-x-3">
             {session ? (
               <>
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="sm">
+                <Link href="/home">
+                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
                     <Home className="h-4 w-4 mr-2" />
                     Home
                   </Button>
                 </Link>
                 
-                <Link href="/posts">
-                  <Button variant="ghost" size="sm">
+                <Link href={`/posts/create?mood=${currentMood}`}>
+                  <Button 
+                    size="sm"
+                    className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
-                    New Post
+                    Express
                   </Button>
                 </Link>
 
                 <Link href={`/profile/${session.user?.id}`}>
-                  <Button variant="ghost" size="sm">
-                    <User className="h-4 w-4 mr-2" />
+                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white flex items-center gap-2">
+                    <Avatar 
+                      username={session.user?.publicUsername}
+                      animalId={session.user?.avatarId as string}
+                      colorIndex={session.user?.colorIndex as number}
+                      size="sm" 
+                    />
                     Profile
                   </Button>
                 </Link>
 
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-gray-300 hover:text-red-400">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
@@ -74,7 +94,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMobileMenu}
@@ -89,28 +109,28 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-3 pt-2 border-t border-gray-200">
+          <div className="md:hidden pb-3 pt-2 border-t border-white/10">
             <div className="flex flex-col space-y-2 px-2">
               {session ? (
                 <>
-                  <Link href="/dashboard" onClick={toggleMobileMenu}>
-                    <Button variant="ghost" className="w-full justify-start">
+                  <Link href="/home" onClick={toggleMobileMenu}>
+                    <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
                       <Home className="h-4 w-4 mr-2" />
                       Home
                     </Button>
                   </Link>
                   
-                  <Link href="/posts" onClick={toggleMobileMenu}>
-                    <Button variant="ghost" className="w-full justify-start">
+                  <Link href={`/posts/create?mood=${currentMood}`} onClick={toggleMobileMenu}>
+                    <Button className="w-full justify-start bg-gradient-to-r from-orange-500 to-rose-500 text-white">
                       <Plus className="h-4 w-4 mr-2" />
-                      New Post
+                      Express
                     </Button>
                   </Link>
 
                   <Link href={`/profile/${session.user?.id}`} onClick={toggleMobileMenu}>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
                       <User className="h-4 w-4 mr-2" />
                       Profile
                     </Button>
@@ -118,7 +138,7 @@ export default function Navbar() {
 
                   <Button 
                     variant="ghost" 
-                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="w-full justify-start text-red-400 hover:text-red-500 hover:bg-red-500/10"
                     onClick={() => {
                       toggleMobileMenu();
                       handleSignOut();

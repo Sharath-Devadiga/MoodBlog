@@ -17,7 +17,10 @@ export const authOptions: AuthOptions = {
 
         if (!email || !password) return null;
 
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findUnique({ 
+          where: { email },
+          select: { id: true, email: true, password: true, publicUsername: true, avatarId: true, colorIndex: true }
+        });
 
         if (!user || !user.password) return null;
 
@@ -28,7 +31,9 @@ export const authOptions: AuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          username: user.username,
+          publicUsername: user.publicUsername,
+          avatarId: user.avatarId,
+          colorIndex: user.colorIndex,
         } as User;
       },
     }),
@@ -42,21 +47,43 @@ export const authOptions: AuthOptions = {
     error: '/signin',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update") {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { id: true, email: true, publicUsername: true, avatarId: true, colorIndex: true }
+        });
+        
+        if (dbUser) {
+          token.publicUsername = dbUser.publicUsername;
+          token.avatarId = dbUser.avatarId;
+          token.colorIndex = dbUser.colorIndex;
+        }
+      }
+      
       if (user) {
         token.id = user.id;
-        token.username = user.username;
+        token.publicUsername = user.publicUsername;
         token.email = user.email;
+        token.avatarId = user.avatarId;
+        token.colorIndex = user.colorIndex;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.username = token.username as string;
+        session.user.publicUsername = token.publicUsername as string | null;
         session.user.email = token.email as string;
+        session.user.avatarId = token.avatarId as string | null | undefined;
+        session.user.colorIndex = token.colorIndex as number | null | undefined;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
 };

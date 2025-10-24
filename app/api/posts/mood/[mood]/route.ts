@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/lib/auth";
 import { MOODS, MoodType } from "@/app/utils/constants";
 
 export async function GET(
   req: NextRequest,
-  context: { params: { mood: string } }
+  context: { params: Promise<{ mood: string }> }
 ) {
   try {
-    const moodParam = context.params.mood.toLowerCase();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+    const params = await context.params;
+    const moodParam = params.mood.toLowerCase();
 
     const validMood = MOODS.some((mood) => mood.value === moodParam);
     if (!validMood) {
@@ -21,21 +26,47 @@ export async function GET(
       where: {
         mood: moodParam as MoodType,
       },
-      include: {
+      select: {
+        id: true,
+        content: true,
+        imageUrl: true,
+        mood: true,
+        createdAt: true,
         user: {
           select: {
             id: true,
-            username: true,
-            avatar: true,
+            publicUsername: true,
+            avatarId: true,
+            colorIndex: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+        likes: userId ? {
+          where: {
+            userId: userId
+          },
+          select: {
+            id: true
+          }
+        } : false
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    return NextResponse.json({ posts });
+    const postsWithLikeStatus = posts.map(post => ({
+      ...post,
+      isLikedByUser: userId ? post.likes && post.likes.length > 0 : false,
+      likes: undefined
+    }));
+
+    return NextResponse.json({ posts: postsWithLikeStatus });
   } catch (error) {
     console.error("Error fetching mood posts:", error);
     return NextResponse.json(

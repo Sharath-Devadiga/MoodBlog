@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MoodBlog",
   description: "Express your thoughts through moods.",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

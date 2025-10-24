@@ -3,12 +3,13 @@ import { getAuthenticatedUser } from "@/app/lib/utils/auth";
 import { validateCommentId } from "@/app/lib/utils/validation";
 import { prisma } from "@/app/lib/prisma";
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const { commentId, error: validationError } = validateCommentId(context.params.id);
+    const params = await context.params;
+    const { commentId, error: validationError } = validateCommentId(params.id);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
@@ -34,12 +35,13 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const { commentId, error: validationError } = validateCommentId(context.params.id);
+    const params = await context.params;
+    const { commentId, error: validationError } = validateCommentId(params.id);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }

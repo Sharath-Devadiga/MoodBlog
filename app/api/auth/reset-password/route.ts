@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { otpStore } from '../forgot-password/route';
+import { otpStore } from '@/app/lib/otpStore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const storedData = otpStore.get(email);
+    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedOtp = otp.toString().trim();
+
+    const storedData = otpStore.get(normalizedEmail);
 
     if (!storedData) {
       return NextResponse.json(
@@ -30,34 +33,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if OTP is expired
     if (Date.now() > storedData.expiresAt) {
-      otpStore.delete(email);
+      otpStore.delete(normalizedEmail);
       return NextResponse.json(
-        { error: 'OTP has expired. Please request a new one.' },
+        { error: 'OTP has expired' },
         { status: 400 }
       );
     }
 
-    // Verify OTP one more time
-    if (storedData.otp !== otp) {
+    if (storedData.otp !== normalizedOtp) {
       return NextResponse.json(
         { error: 'Invalid OTP' },
         { status: 400 }
       );
     }
 
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update user password
     await prisma.user.update({
-      where: { email },
+      where: { email: normalizedEmail },
       data: { password: hashedPassword },
     });
 
-    // Delete the OTP after successful password reset
-    otpStore.delete(email);
+    otpStore.delete(normalizedEmail);
 
     return NextResponse.json({
       message: 'Password reset successfully',

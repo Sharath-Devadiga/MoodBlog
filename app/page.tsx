@@ -48,7 +48,6 @@ export default function LandingPage() {
 
   return (
     <div className="bg-zinc-950 text-white min-h-screen">
-      {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-zinc-950/90 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <motion.div
@@ -75,12 +74,9 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-        {/* Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
         
-        {/* Gradient Orbs */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/30 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         
@@ -137,7 +133,6 @@ export default function LandingPage() {
             <p className="text-sm text-gray-500 mt-6">Free forever • No credit card required</p>
           </motion.div>
 
-          {/* Emotion Pills */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -161,7 +156,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-950">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -204,7 +198,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-900">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -243,7 +236,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-950">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -269,7 +261,6 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* Footer */}
       <footer className="py-6 sm:py-8 px-4 sm:px-6 border-t border-white/10 bg-zinc-950">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center items-center">

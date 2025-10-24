@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "colorIndex" INTEGER,
+ALTER COLUMN "avatarId" DROP NOT NULL,
+ALTER COLUMN "avatarId" DROP DEFAULT;

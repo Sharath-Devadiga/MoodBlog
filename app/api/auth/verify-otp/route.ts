@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { otpStore } from '../forgot-password/route';
+import { otpStore } from '@/app/lib/otpStore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +12,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const storedData = otpStore.get(email);
+    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedOtp = otp.toString().trim();
+
+    const storedData = otpStore.get(normalizedEmail);
 
     if (!storedData) {
       return NextResponse.json(
@@ -21,24 +24,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if OTP is expired
     if (Date.now() > storedData.expiresAt) {
-      otpStore.delete(email);
+      otpStore.delete(normalizedEmail);
       return NextResponse.json(
-        { error: 'OTP has expired. Please request a new one.' },
+        { error: 'OTP has expired' },
         { status: 400 }
       );
     }
 
-    // Verify OTP
-    if (storedData.otp !== otp) {
+    if (storedData.otp !== normalizedOtp) {
       return NextResponse.json(
         { error: 'Invalid OTP' },
         { status: 400 }
       );
     }
 
-    // OTP is valid - don't delete it yet, we need it for password reset
     return NextResponse.json({
       message: 'OTP verified successfully',
       verified: true,
