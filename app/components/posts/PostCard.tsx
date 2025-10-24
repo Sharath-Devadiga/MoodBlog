@@ -73,7 +73,6 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
       setLiked(previousLiked);
       setLikeCount(previousCount);
       toast.error('Failed to update like');
-      console.error('Like error:', error);
     } finally {
       setLoading(false);
     }
@@ -88,7 +87,6 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
       onDelete?.();
     } catch (error) {
       toast.error('Failed to delete post');
-      console.error('Delete error:', error);
     } finally {
       setDeleting(false);
     }

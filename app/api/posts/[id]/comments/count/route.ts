@@ -23,7 +23,6 @@ export async function GET(
 
     return NextResponse.json({ count });
   } catch (error) {
-    console.error('Error fetching comment count:', error);
     return NextResponse.json(
       { error: 'Failed to fetch comment count' },
       { status: 500 }

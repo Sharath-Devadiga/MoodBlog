@@ -56,7 +56,6 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
 
     return NextResponse.json({ comments: rootComments });
   } catch (error) {
-    console.error('Error fetching comments:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

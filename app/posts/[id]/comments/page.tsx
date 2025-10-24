@@ -40,7 +40,6 @@ export default function CommentsPage() {
         const response = await postsAPI.getPost(id as string);
         setPost(response.data.post);
       } catch (error) {
-        console.error('Error fetching post:', error);
         toast.error('Failed to load post');
       } finally {
         setLoading(false);

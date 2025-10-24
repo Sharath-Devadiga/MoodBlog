@@ -62,7 +62,6 @@ export async function PUT(request: NextRequest) {
       user: updatedUser,
     });
   } catch (error) {
-    console.error("Error updating avatar:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

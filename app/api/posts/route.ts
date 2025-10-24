@@ -55,7 +55,6 @@ export async function POST(req: NextRequest) {
       post 
     });
   } catch (e) {
-    console.error('POST /api/posts error:', e);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: e instanceof Error ? e.message : 'Unknown error'
@@ -69,7 +68,6 @@ export async function GET() {
     const userId = session?.user?.id;
 
     const posts = await prisma.post.findMany({
-        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           content: true,
@@ -97,17 +95,47 @@ export async function GET() {
             select: {
               id: true
             }
+          } : false,
+          comments: userId ? {
+            where: {
+              userId: userId
+            },
+            select: {
+              id: true
+            }
           } : false
         }
       });
 
-    const postsWithLikeStatus = posts.map(post => ({
-      ...post,
-      isLikedByUser: userId ? post.likes && post.likes.length > 0 : false,
-      likes: undefined
-    }));
+    const postsWithScore = posts.map(post => {
+      const now = new Date();
+      const postAge = (now.getTime() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60);
+      
+      const likeCount = post._count.likes;
+      const commentCount = post._count.comments;
+      const userInteracted = userId ? (post.likes && post.likes.length > 0) || (post.comments && post.comments.length > 0) : false;
+      
+      const engagementScore = 
+        (likeCount * 2) +
+        (commentCount * 3) +
+        (userInteracted ? 50 : 0) +
+        (1 / (postAge + 1)) * 20;
 
-    return NextResponse.json({ posts: postsWithLikeStatus });
+      return {
+        ...post,
+        isLikedByUser: userId ? post.likes && post.likes.length > 0 : false,
+        hasUserCommented: userId ? post.comments && post.comments.length > 0 : false,
+        engagementScore,
+        likes: undefined,
+        comments: undefined
+      };
+    });
+
+    const sortedPosts = postsWithScore.sort((a, b) => b.engagementScore - a.engagementScore);
+
+    const finalPosts = sortedPosts.map(({ engagementScore, hasUserCommented, ...post }) => post);
+
+    return NextResponse.json({ posts: finalPosts });
   } catch (e) {
     return NextResponse.json({ 
       error: 'Internal server error',

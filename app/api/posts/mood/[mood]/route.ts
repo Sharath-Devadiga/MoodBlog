@@ -53,22 +53,47 @@ export async function GET(
           select: {
             id: true
           }
+        } : false,
+        comments: userId ? {
+          where: {
+            userId: userId
+          },
+          select: {
+            id: true
+          }
         } : false
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      }
     });
 
-    const postsWithLikeStatus = posts.map(post => ({
-      ...post,
-      isLikedByUser: userId ? post.likes && post.likes.length > 0 : false,
-      likes: undefined
-    }));
+    const postsWithScore = posts.map(post => {
+      const now = new Date();
+      const postAge = (now.getTime() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60);
+      
+      const likeCount = post._count.likes;
+      const commentCount = post._count.comments;
+      const userInteracted = userId ? (post.likes && post.likes.length > 0) || (post.comments && post.comments.length > 0) : false;
+      
+      const engagementScore = 
+        (likeCount * 2) +
+        (commentCount * 3) +
+        (userInteracted ? 50 : 0) +
+        (1 / (postAge + 1)) * 20;
 
-    return NextResponse.json({ posts: postsWithLikeStatus });
+      return {
+        ...post,
+        isLikedByUser: userId ? post.likes && post.likes.length > 0 : false,
+        engagementScore,
+        likes: undefined,
+        comments: undefined
+      };
+    });
+
+    const sortedPosts = postsWithScore.sort((a, b) => b.engagementScore - a.engagementScore);
+
+    const finalPosts = sortedPosts.map(({ engagementScore, ...post }) => post);
+
+    return NextResponse.json({ posts: finalPosts });
   } catch (error) {
-    console.error("Error fetching mood posts:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
