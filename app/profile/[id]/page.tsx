@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -63,9 +63,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const isOwnProfile = (session?.user as any)?.id === userId;
+  const isOwnProfile = (session?.user as { id?: string })?.id === userId;
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       const response = await fetch(`/api/users/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch user data");
@@ -85,11 +85,11 @@ export default function ProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchUserData();
-  }, [userId]);
+  }, [fetchUserData]);
 
   useEffect(() => {
     if (selectedMood) {

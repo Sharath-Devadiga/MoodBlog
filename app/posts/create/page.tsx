@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -45,7 +45,7 @@ const moodColors: Record<Mood, string> = {
   amused: 'text-pink-400',
 };
 
-export default function CreatePostPage() {
+function CreatePostForm() {
   const [content, setContent] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export default function CreatePostPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.replace('/signin');
-    } else if (status === 'authenticated' && !(session?.user as any)?.publicUsername) {
+    } else if (status === 'authenticated' && !(session?.user as { publicUsername?: string })?.publicUsername) {
       router.replace('/create-profile');
     } else if (!mood || !['happy', 'calm', 'anxious', 'sad', 'angry', 'excited', 'lonely', 'amused'].includes(mood)) {
       router.replace('/home');
@@ -314,5 +314,17 @@ export default function CreatePostPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function CreatePostPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+        <div className="w-8 h-8 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
+      </div>
+    }>
+      <CreatePostForm />
+    </Suspense>
   );
 }

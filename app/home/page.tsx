@@ -92,7 +92,7 @@ export default function HomePage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.replace('/signin');
-    } else if (status === 'authenticated' && session?.user && !session.user.publicUsername) {
+    } else if (status === 'authenticated' && session?.user && !(session.user as { publicUsername?: string })?.publicUsername) {
       router.replace('/create-profile');
     }
   }, [status, session, router]);
@@ -105,7 +105,7 @@ export default function HomePage() {
     );
   }
 
-  if (status === 'unauthenticated' || !session?.user?.publicUsername) {
+  if (status === 'unauthenticated' || !(session?.user as { publicUsername?: string })?.publicUsername) {
     return null;
   }
 

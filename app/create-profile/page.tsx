@@ -22,7 +22,7 @@ export default function CreateProfilePage() {
       return;
     }
 
-    if (status === 'authenticated' && session?.user?.publicUsername) {
+    if (status === 'authenticated' && (session?.user as { publicUsername?: string })?.publicUsername) {
       router.replace('/home');
       return;
     }

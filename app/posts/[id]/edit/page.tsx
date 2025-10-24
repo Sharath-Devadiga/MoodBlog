@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Smile, CloudRain, HeartCrack, Zap, Sparkles, PartyPopper, UserX, Laugh, Image as ImageIcon, X } from 'lucide-react';
 import { Button } from '@/app/components/ui/Button';
 import { Textarea } from '@/app/components/ui/TextArea';
-import { MOODS, MoodType } from '@/app/utils/constants';
+import { MOODS } from '@/app/utils/constants';
 
 type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'excited' | 'lonely' | 'amused';
 
@@ -70,17 +71,7 @@ export default function EditPostPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.replace('/signin');
-    } else if (status === 'authenticated' && !session?.user?.publicUsername) {
-      router.replace('/create-profile');
-    } else if (status === 'authenticated') {
-      fetchPost();
-    }
-  }, [status, session, postId]);
-
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     try {
       const response = await fetch(`/api/posts/${postId}`);
       if (!response.ok) {
@@ -93,7 +84,7 @@ export default function EditPostPage() {
       const post: Post = data.post;
 
       
-      if (post.user.id !== (session?.user as any)?.id) {
+      if (post.user.id !== (session?.user as { id: string })?.id) {
         toast.error('You can only edit your own posts');
         router.replace('/home');
         return;
@@ -105,13 +96,23 @@ export default function EditPostPage() {
         setExistingImageUrl(post.imageUrl);
         setImagePreview(post.imageUrl);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to load post');
       router.replace('/home');
     } finally {
       setFetchingPost(false);
     }
-  };
+  }, [postId, router, session]);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.replace('/signin');
+    } else if (status === 'authenticated' && !(session?.user as { publicUsername?: string })?.publicUsername) {
+      router.replace('/create-profile');
+    } else if (status === 'authenticated') {
+      fetchPost();
+    }
+  }, [status, session, fetchPost, router]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -206,7 +207,7 @@ export default function EditPostPage() {
 
       toast.success('Post updated successfully!');
       router.push(`/mood-dashboard/${selectedMood}`);
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -289,9 +290,11 @@ export default function EditPostPage() {
 
                 {imagePreview ? (
                   <div className="relative">
-                    <img
+                    <Image
                       src={imagePreview}
                       alt="Preview"
+                      width={800}
+                      height={256}
                       className="w-full h-64 object-cover rounded-xl border border-white/10"
                     />
                     <button

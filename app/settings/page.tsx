@@ -29,11 +29,11 @@ export default function SettingsPage() {
     if (status === "unauthenticated") {
       router.push("/signin");
     }
-    if (session?.user?.avatarId) {
-      setSelectedAnimal(session.user.avatarId as string);
+    if (session && (session.user as { avatarId?: string })?.avatarId) {
+      setSelectedAnimal((session.user as { avatarId?: string }).avatarId as string);
     }
-    if (session?.user?.colorIndex !== undefined && session?.user?.colorIndex !== null) {
-      setSelectedColorIndex(session.user.colorIndex);
+    if (session && (session.user as { colorIndex?: number })?.colorIndex !== undefined && (session.user as { colorIndex?: number })?.colorIndex !== null) {
+      setSelectedColorIndex((session.user as { colorIndex?: number }).colorIndex as number);
     }
   }, [status, router, session]);
 
@@ -139,7 +139,7 @@ export default function SettingsPage() {
               <p className="text-sm font-medium text-gray-300 mb-2">Current Avatar:</p>
               <div className="flex items-center gap-3 p-3 bg-zinc-800 rounded-lg border border-white/10">
                 <Avatar 
-                  username={session?.user?.publicUsername}
+                  username={(session?.user as { publicUsername?: string })?.publicUsername}
                   animalId={selectedAnimal}
                   colorIndex={selectedColorIndex}
                   size="lg" 
@@ -169,7 +169,7 @@ export default function SettingsPage() {
                   title={animal.name}
                 >
                   <Avatar 
-                    username={session?.user?.publicUsername}
+                    username={(session?.user as { publicUsername?: string })?.publicUsername}
                     animalId={animal.id}
                     colorIndex={selectedColorIndex}
                     size="md" 
@@ -199,7 +199,7 @@ export default function SettingsPage() {
                   title={`Color ${index + 1}`}
                 >
                   <div className={`${color} w-full h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg`}>
-                    {session?.user?.publicUsername?.charAt(0).toUpperCase() || '?'}
+                    {(session?.user as { publicUsername?: string })?.publicUsername?.charAt(0).toUpperCase() || '?'}
                   </div>
                   {selectedColorIndex === index && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center">
@@ -226,7 +226,7 @@ export default function SettingsPage() {
 
           <Button
             onClick={handleSaveAvatar}
-            disabled={savingAvatar || (selectedAnimal === session?.user?.avatarId && selectedColorIndex === session?.user?.colorIndex)}
+            disabled={savingAvatar || (selectedAnimal === (session?.user as { avatarId?: string })?.avatarId && selectedColorIndex === (session?.user as { colorIndex?: number })?.colorIndex)}
             className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white"
           >
             <Save className="w-4 h-4 mr-2" />
@@ -249,7 +249,7 @@ export default function SettingsPage() {
                 Public Username
               </label>
               <div className="bg-zinc-800 border border-white/10 rounded-lg px-4 py-3 text-gray-300">
-                {session.user.publicUsername}
+                {(session?.user as { publicUsername?: string })?.publicUsername}
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 This is your anonymous username that others see. It cannot be changed.
@@ -262,7 +262,7 @@ export default function SettingsPage() {
                 Email
               </label>
               <div className="bg-zinc-800 border border-white/10 rounded-lg px-4 py-3 text-gray-300 blur-sm select-none">
-                {session.user.email}
+                {session?.user?.email}
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 Your email is private and hidden for your security.

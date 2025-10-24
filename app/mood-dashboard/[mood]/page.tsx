@@ -104,7 +104,7 @@ export default function MoodDashboardPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.replace('/signin');
-    } else if (status === 'authenticated' && !session?.user?.publicUsername) {
+    } else if (status === 'authenticated' && !(session?.user as { publicUsername?: string })?.publicUsername) {
       router.replace('/create-profile');
     }
   }, [status, session, router]);
