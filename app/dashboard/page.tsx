@@ -55,7 +55,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
           >
-            Welcome back, <span className="text-blue-600">{session.user?.username}</span>!
+            Welcome back, <span className="text-blue-600">{(session.user as any)?.username}</span>!
           </motion.h1>
           <motion.p
             className="text-gray-600 text-lg"

@@ -21,6 +21,12 @@ export async function POST(req: NextRequest) {
     })
 
     if (existingUser) {
+      if (existingUser.email === email) {
+        return NextResponse.json({ error: 'Email already registered. Please use a different email or sign in.' }, { status: 409 })
+      }
+      if (existingUser.username === username) {
+        return NextResponse.json({ error: 'Username already taken. Please choose a different username.' }, { status: 409 })
+      }
       return NextResponse.json({ error: 'User already exists' }, { status: 409 })
     }
 
@@ -36,6 +42,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: 'User created successfully', user }, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }

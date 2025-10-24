@@ -25,7 +25,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Post created successfully" });
   } catch (e) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('POST /api/posts error:', e);
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: e instanceof Error ? e.message : 'Unknown error'
+    }, { status: 500 });
   }
 }
 
@@ -49,6 +53,10 @@ export async function GET() {
       });
     return NextResponse.json(posts);
   } catch (e) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('GET /api/posts error:', e);
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: e instanceof Error ? e.message : 'Unknown error'
+    }, { status: 500 });
   }
 }

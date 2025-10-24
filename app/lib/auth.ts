@@ -1,4 +1,4 @@
-import { AuthOptions } from "next-auth";
+import { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
@@ -22,19 +22,24 @@ export const authOptions: AuthOptions = {
         if (!user || !user.password) return null;
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        
         if (!isPasswordCorrect) return null;
 
         return {
-          id: user.id.toString(),
+          id: user.id,
           email: user.email,
           username: user.username,
-        };
+        } as User;
       },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+  },
+  pages: {
+    signIn: '/signin',
+    error: '/signin',
   },
   callbacks: {
     async jwt({ token, user }) {
