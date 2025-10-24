@@ -18,7 +18,7 @@ export default function DashboardPage() {
       return;
     }
     
-    if (status === 'authenticated' && !session?.user?.publicUsername) {
+    if (status === 'authenticated' && !(session?.user as any)?.publicUsername) {
       router.push('/create-profile');
     }
   }, [status, session, router]);
@@ -31,7 +31,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (!session || !session.user?.publicUsername) return null;
+  if (!session || !(session.user as any)?.publicUsername) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-pink-100">
@@ -60,7 +60,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
           >
-            Welcome back, <span className="text-blue-600">{session.user?.publicUsername}</span>!
+            Welcome back, <span className="text-blue-600">{(session.user as any)?.publicUsername}</span>!
           </motion.h1>
           <motion.p
             className="text-gray-600 text-base md:text-lg text-center px-4"

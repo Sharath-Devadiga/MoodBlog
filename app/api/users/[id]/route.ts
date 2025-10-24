@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/app/lib/utils/auth";
 import { validateUserId } from "@/app/lib/utils/validation";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
     const { user, error } = await getAuthenticatedUser(req);
     if (error) return error;
 
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
     const currentUserId = session?.user?.id;
 
     const params = await context.params;

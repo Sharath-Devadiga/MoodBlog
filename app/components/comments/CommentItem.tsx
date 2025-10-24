@@ -42,7 +42,7 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
   const [editContent, setEditContent] = useState(comment.content);
   const [loading, setLoading] = useState(false);
 
-  const isOwner = session?.user?.id === comment.user.id.toString();
+  const isOwner = (session?.user as any)?.id === comment.user.id.toString();
   const maxDepth = 3; 
   const hasReplies = comment.replies && comment.replies.length > 0;
   const replyCount = comment.replies?.length || 0;

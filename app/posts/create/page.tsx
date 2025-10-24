@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Send, Smile, CloudRain, HeartCrack, Zap, Sparkles, Image as ImageIcon, X, PartyPopper, UserX, Laugh } from 'lucide-react';
@@ -60,7 +61,7 @@ export default function CreatePostPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.replace('/signin');
-    } else if (status === 'authenticated' && !session?.user?.publicUsername) {
+    } else if (status === 'authenticated' && !(session?.user as any)?.publicUsername) {
       router.replace('/create-profile');
     } else if (!mood || !['happy', 'calm', 'anxious', 'sad', 'angry', 'excited', 'lonely', 'amused'].includes(mood)) {
       router.replace('/home');
@@ -168,7 +169,7 @@ export default function CreatePostPage() {
 
       toast.success('Post created successfully!');
       router.push(`/mood-dashboard/${mood}`);
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -243,9 +244,11 @@ export default function CreatePostPage() {
 
                 {imagePreview ? (
                   <div className="relative">
-                    <img
+                    <Image
                       src={imagePreview}
                       alt="Preview"
+                      width={800}
+                      height={256}
                       className="w-full h-64 object-cover rounded-xl border border-white/10"
                     />
                     <button

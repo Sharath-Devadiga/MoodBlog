@@ -65,12 +65,12 @@ export default function Navbar() {
                   </Button>
                 </Link>
 
-                <Link href={`/profile/${session.user?.id}`}>
+                <Link href={`/profile/${(session.user as any)?.id}`}>
                   <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white flex items-center gap-2">
                     <Avatar 
-                      username={session.user?.publicUsername}
-                      animalId={session.user?.avatarId as string}
-                      colorIndex={session.user?.colorIndex as number}
+                      username={(session.user as any)?.publicUsername}
+                      animalId={(session.user as any)?.avatarId as string}
+                      colorIndex={(session.user as any)?.colorIndex as number}
                       size="sm" 
                     />
                     Profile
@@ -129,7 +129,7 @@ export default function Navbar() {
                     </Button>
                   </Link>
 
-                  <Link href={`/profile/${session.user?.id}`} onClick={toggleMobileMenu}>
+                  <Link href={`/profile/${(session.user as any)?.id}`} onClick={toggleMobileMenu}>
                     <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
                       <User className="h-4 w-4 mr-2" />
                       Profile

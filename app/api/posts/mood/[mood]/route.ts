@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { MOODS, MoodType } from "@/app/utils/constants";
 
@@ -9,7 +9,7 @@ export async function GET(
   context: { params: Promise<{ mood: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
     const userId = session?.user?.id;
     const params = await context.params;
     const moodParam = params.mood.toLowerCase();

@@ -1,9 +1,8 @@
-import { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
-export const authOptions: AuthOptions = {
+export const authOptions: any = {
   providers: [
     CredentialsProvider({
       name: "Login with email",
@@ -11,7 +10,7 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "text", placeholder: "" },
         password: { label: "Password", type: "password", placeholder: "" },
       },
-      async authorize(credentials: any) {
+      async authorize(credentials) {
         const email = credentials?.email;
         const password = credentials?.password;
 
@@ -34,7 +33,7 @@ export const authOptions: AuthOptions = {
           publicUsername: user.publicUsername,
           avatarId: user.avatarId,
           colorIndex: user.colorIndex,
-        } as User;
+        };
       },
     }),
   ],
@@ -47,7 +46,7 @@ export const authOptions: AuthOptions = {
     error: '/signin',
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger }: any) {
       if (trigger === "update") {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
@@ -63,24 +62,24 @@ export const authOptions: AuthOptions = {
       
       if (user) {
         token.id = user.id;
-        token.publicUsername = user.publicUsername;
+        token.publicUsername = (user as any).publicUsername;
         token.email = user.email;
-        token.avatarId = user.avatarId;
-        token.colorIndex = user.colorIndex;
+        token.avatarId = (user as any).avatarId;
+        token.colorIndex = (user as any).colorIndex;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.publicUsername = token.publicUsername as string | null;
+        (session.user as any).id = token.id as string;
+        (session.user as any).publicUsername = token.publicUsername as string | null;
         session.user.email = token.email as string;
-        session.user.avatarId = token.avatarId as string | null | undefined;
-        session.user.colorIndex = token.colorIndex as number | null | undefined;
+        (session.user as any).avatarId = token.avatarId as string | null | undefined;
+        (session.user as any).colorIndex = token.colorIndex as number | null | undefined;
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: any) {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;

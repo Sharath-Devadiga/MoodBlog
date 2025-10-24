@@ -46,8 +46,8 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const isOwner = session?.user?.id && post.user?.id && 
-                  (session.user as any).id === post.user.id.toString();
+  const isOwner = (session?.user as any)?.id && post.user?.id && 
+                  (session?.user as any).id === post.user.id.toString();
 
   const handleLike = async () => {
     if (!session?.user) {

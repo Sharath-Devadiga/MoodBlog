@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/app/lib/utils/auth";
 import { prisma } from "@/app/lib/prisma";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import cloudinary from "@/app/lib/cloudinary";
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
     const posts = await prisma.post.findMany({

@@ -53,7 +53,7 @@ interface MoodStats {
 export default function ProfilePage() {
   const params = useParams();
   const userId = params?.id as string;
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -63,7 +63,29 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const isOwnProfile = session?.user?.id === userId;
+  const isOwnProfile = (session?.user as any)?.id === userId;
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`/api/users/${userId}`);
+      if (!response.ok) throw new Error("Failed to fetch user data");
+
+      const data = await response.json();
+      setUser(data.user);
+      setPosts(data.posts);
+      setFilteredPosts(data.posts);
+
+      const stats = MOODS.map((mood) => ({
+        mood: mood.value,
+        count: data.posts.filter((p: Post) => p.mood === mood.value).length,
+      }));
+      setMoodStats(stats);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchUserData();
@@ -76,36 +98,6 @@ export default function ProfilePage() {
       setFilteredPosts(posts);
     }
   }, [selectedMood, posts]);
-
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/users/${userId}`);
-      if (!response.ok) throw new Error("Failed to fetch user data");
-      
-      const data = await response.json();
-      setUser(data);
-      setPosts(data.posts || []);
-      setFilteredPosts(data.posts || []);
-
-      
-      if (data.posts) {
-        const stats = MOODS.map((mood) => ({
-          mood: mood.value,
-          count: data.posts.filter((p: Post) => p.mood === mood.value).length,
-        })).filter((stat) => stat.count > 0);
-        setMoodStats(stats);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    router.push("/api/auth/signout");
-  };
 
   const handleBack = () => {
     router.back();
