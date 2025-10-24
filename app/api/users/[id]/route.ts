@@ -69,16 +69,23 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const postsWithLikeStatus = {
-      ...userProfile,
-      posts: userProfile.posts.map(post => ({
-        ...post,
-        isLikedByUser: currentUserId ? post.likes && post.likes.length > 0 : false,
-        likes: undefined
-      }))
-    };
+    const postsWithLikeStatus = userProfile.posts.map(post => ({
+      ...post,
+      isLikedByUser: currentUserId ? post.likes && post.likes.length > 0 : false,
+      likes: undefined
+    }));
 
-    return NextResponse.json(postsWithLikeStatus);
+    return NextResponse.json({
+      user: {
+        id: userProfile.id,
+        publicUsername: userProfile.publicUsername,
+        bio: userProfile.bio,
+        avatarId: userProfile.avatarId,
+        colorIndex: userProfile.colorIndex,
+        createdAt: userProfile.createdAt
+      },
+      posts: postsWithLikeStatus
+    });
   } catch (e) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

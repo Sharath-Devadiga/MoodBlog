@@ -19,8 +19,7 @@ export default function Navbar() {
   const currentMood = pathname?.match(/mood-dashboard\/(\w+)/)?.[1] || 'happy';
 
   const handleSignOut = async () => {
-    await signOut({ redirect: false });
-    router.push('/signin');
+    await signOut({ callbackUrl: '/signin' });
   };
 
   const toggleMobileMenu = () => {
