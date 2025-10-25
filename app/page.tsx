@@ -86,11 +86,11 @@ export default function LandingPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1, duration: 0.4 }}
-              className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2.5 sm:py-3 mb-6 sm:mb-8 shadow-lg shadow-emerald-500/20"
+              className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 rounded-xl sm:rounded-2xl px-3 sm:px-6 py-2 sm:py-3 mb-6 sm:mb-8 shadow-lg shadow-emerald-500/20"
             >
-              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
-              <span className="text-sm sm:text-base md:text-lg font-semibold text-emerald-400">
-                100% Anonymous • Express Freely Without Identity
+              <ShieldCheck className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-400 flex-shrink-0" />
+              <span className="text-xs sm:text-base md:text-lg font-semibold text-emerald-400 whitespace-nowrap">
+                100% Anonymous • Express Freely
               </span>
             </motion.div>
 
