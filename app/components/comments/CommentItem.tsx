@@ -11,6 +11,7 @@ import ConfirmDialog from '@/app/components/ui/ConfirmDialog';
 import Avatar from '@/app/components/ui/Avatar';
 import CommentForm from './CommentForm';
 import { commentsAPI } from '@/app/utils/api';
+import { useCommentStore } from '@/app/store/commentStore';
 import toast from 'react-hot-toast';
 
 interface Comment {
@@ -29,18 +30,22 @@ interface Comment {
 interface CommentItemProps {
   comment: Comment;
   postId: string;
-  onUpdate: () => void;
   depth?: number;
 }
 
-export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: CommentItemProps) {
+export default function CommentItem({ comment, postId, depth = 0 }: CommentItemProps) {
   const { data: session } = useSession();
+  const { updateComment, removeComment } = useCommentStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(true); 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [editContent, setEditContent] = useState(comment.content);
+  const [editContent, setEditContent] = useState(comment?.content || '');
   const [loading, setLoading] = useState(false);
+
+  if (!comment || !comment.user) {
+    return null;
+  }
 
   const isOwner = (session?.user as any)?.id === comment.user.id.toString();
   const maxDepth = 3; 
@@ -55,12 +60,12 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
 
     setLoading(true);
     try {
-      await commentsAPI.updateComment(comment.id, {
+      const { data } = await commentsAPI.updateComment(comment.id, {
         content: editContent
       });
       
+      updateComment(postId, comment.id, data.comment.content);
       setIsEditing(false);
-      onUpdate();
       toast.success('Comment updated');
     } catch (error) {
       toast.error('Failed to update comment');
@@ -73,7 +78,7 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
     setLoading(true);
     try {
       await commentsAPI.deleteComment(comment.id);
-      onUpdate();
+      removeComment(postId, comment.id);
       toast.success('Comment deleted');
       setShowDeleteDialog(false);
     } catch (error) {
@@ -85,7 +90,6 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
 
   const handleReplyAdded = () => {
     setIsReplying(false);
-    onUpdate();
   };
 
   return (
@@ -218,7 +222,6 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
                 <CommentForm
                   postId={postId}
                   parentId={comment.id}
-                  onCommentAdded={handleReplyAdded}
                   placeholder="Write a reply..."
                   buttonText="Reply"
                 />
@@ -242,7 +245,6 @@ export default function CommentItem({ comment, postId, onUpdate, depth = 0 }: Co
                   key={reply.id}
                   comment={reply}
                   postId={postId}
-                  onUpdate={onUpdate}
                   depth={depth + 1}
                 />
               ))}

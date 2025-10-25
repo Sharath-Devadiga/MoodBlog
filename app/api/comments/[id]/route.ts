@@ -53,19 +53,36 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
       return NextResponse.json({ error: "Comment content cannot be empty" }, { status: 400 });
     }
 
-    const updated = await prisma.comment.updateMany({
+    const existing = await prisma.comment.findFirst({
       where: {
         id: commentId,
-        userId: user!.id, 
-      },
-      data: { content }
+        userId: user!.id
+      }
     });
 
-    if (updated.count === 0) {
+    if (!existing) {
       return NextResponse.json({ error: "Comment not found or unauthorized" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Comment updated successfully" });
+    const updated = await prisma.comment.update({
+      where: { id: commentId },
+      data: { content },
+      include: {
+        user: {
+          select: {
+            id: true,
+            publicUsername: true,
+            avatarId: true,
+            colorIndex: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({ 
+      message: "Comment updated successfully",
+      comment: updated
+    });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

@@ -6,12 +6,12 @@ import { useSession } from 'next-auth/react';
 import { Button } from '@/app/components/ui/Button';
 import { Textarea } from '@/app/components/ui/TextArea';
 import { commentsAPI } from '@/app/utils/api';
+import { useCommentStore } from '@/app/store/commentStore';
 import toast from 'react-hot-toast';
 
 interface CommentFormProps {
   postId: string;
   parentId?: string;
-  onCommentAdded: () => void;
   placeholder?: string;
   buttonText?: string;
 }
@@ -23,11 +23,11 @@ interface CommentFormData {
 export default function CommentForm({ 
   postId, 
   parentId, 
-  onCommentAdded, 
   placeholder = "Write a comment...",
   buttonText = "Post Comment"
 }: CommentFormProps) {
   const { data: session } = useSession();
+  const { addComment } = useCommentStore();
   const [loading, setLoading] = useState(false);
   
   const {
@@ -45,14 +45,14 @@ export default function CommentForm({
 
     setLoading(true);
     try {
-      await commentsAPI.createComment({
+      const response = await commentsAPI.createComment({
         postId: postId,
         content: data.content,
         parentId: parentId || null
       });
       
+      addComment(postId, response.data.comment);
       reset();
-      onCommentAdded();
       toast.success('Comment added successfully');
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Failed to add comment');

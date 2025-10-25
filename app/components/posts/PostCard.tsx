@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { formatDistanceToNow } from 'date-fns';
 import { Heart, MessageCircle, Edit, Trash2, MoreHorizontal } from 'lucide-react';
@@ -12,6 +13,7 @@ import { Button } from '@/app/components/ui/Button';
 import ConfirmDialog from '@/app/components/ui/ConfirmDialog';
 import Avatar from '@/app/components/ui/Avatar';
 import { postsAPI } from '@/app/utils/api';
+import { useLikeStore } from '@/app/store/likeStore';
 import toast from 'react-hot-toast';
 
 interface PostCardProps {
@@ -39,13 +41,25 @@ interface PostCardProps {
 
 export default function PostCard({ post, onDelete }: PostCardProps) {
   const { data: session } = useSession();
-  const [liked, setLiked] = useState(post.isLikedByUser || false);
-  const [likeCount, setLikeCount] = useState(post._count?.likes || 0);
+  const router = useRouter();
+  const { setLike, toggleLike, getLikeStatus } = useLikeStore();
   const [commentCount, setCommentCount] = useState(post._count?.comments || 0);
   const [loading, setLoading] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  const likeStatus = getLikeStatus(post.id);
+  const liked = likeStatus.isLiked;
+  const likeCount = likeStatus.count;
+
+  useEffect(() => {
+    if (!initialized) {
+      setLike(post.id, post.isLikedByUser || false, post._count?.likes || 0);
+      setInitialized(true);
+    }
+  }, [post.id, initialized, setLike]);
 
   const isOwner = (session?.user as any)?.id && post.user?.id && 
                   (session?.user as any).id === post.user.id.toString();
@@ -53,6 +67,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const handleLike = async () => {
     if (!session?.user) {
       toast.error('Please sign in to like posts');
+      setTimeout(() => router.push('/signin'), 1500);
       return;
     }
 
@@ -61,21 +76,35 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
     const previousLiked = liked;
     const previousCount = likeCount;
     
-    const willBeLiked = !liked;
-    
-    setLiked(willBeLiked);
-    setLikeCount(willBeLiked ? likeCount + 1 : likeCount - 1);
+    toggleLike(post.id);
     setLoading(true);
 
     try {
       const response = await postsAPI.toggleLike(post.id);
-      setLiked(response.data.liked);
+      setLike(post.id, response.data.liked, response.data.liked ? previousCount + 1 : previousCount - 1);
     } catch (error) {
-      setLiked(previousLiked);
-      setLikeCount(previousCount);
+      setLike(post.id, previousLiked, previousCount);
       toast.error('Failed to update like');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCommentClick = (e: React.MouseEvent) => {
+    if (!session?.user) {
+      e.preventDefault();
+      toast.error('Please sign in to comment');
+      setTimeout(() => router.push('/signin'), 1500);
+      return;
+    }
+  };
+
+  const handleProfileClick = (e: React.MouseEvent) => {
+    if (!session?.user) {
+      e.preventDefault();
+      toast.error('Please sign in to view profiles');
+      setTimeout(() => router.push('/signin'), 1500);
+      return;
     }
   };
 
@@ -105,7 +134,11 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         <CardHeader className="p-3 sm:p-4 lg:p-5">
           <div className="flex items-start justify-between gap-2 sm:gap-3">
             <div className="flex items-start gap-2 sm:gap-2.5 lg:gap-3 flex-1 min-w-0">
-              <Link href={`/profile/${post.user.id}`} className="flex-shrink-0">
+              <Link 
+                href={session?.user ? `/profile/${post.user.id}` : '#'} 
+                className="flex-shrink-0"
+                onClick={handleProfileClick}
+              >
                 <Avatar 
                   username={post.user.publicUsername}
                   animalId={post.user.avatarId}
@@ -117,8 +150,9 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Link 
-                    href={`/profile/${post.user.id}`}
+                    href={session?.user ? `/profile/${post.user.id}` : '#'}
                     className="font-semibold hover:underline text-sm sm:text-base text-white truncate"
+                    onClick={handleProfileClick}
                   >
                     {post.user.publicUsername || 'Anonymous'}
                   </Link>
@@ -224,7 +258,11 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
               </Button>
             </motion.div>
             
-            <Link href={`/posts/${post.id}/comments`} className="flex-1">
+            <Link 
+              href={session?.user ? `/posts/${post.id}/comments` : '#'} 
+              className="flex-1"
+              onClick={handleCommentClick}
+            >
               <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                 <Button 
                   variant="ghost" 

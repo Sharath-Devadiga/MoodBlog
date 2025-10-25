@@ -134,7 +134,7 @@ export default function MoodDashboardPage() {
 
   return (
     <>
-      <div className="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur-lg shadow-lg">
+      <div className="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur-lg shadow-lg will-change-transform">
         <Navbar />
       </div>
 

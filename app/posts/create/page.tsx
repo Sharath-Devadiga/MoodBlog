@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Send, Smile, CloudRain, Angry, Zap, Sparkles, Image as ImageIcon, X, Frown, UserX, Laugh } from 'lucide-react';
 import { Button } from '@/app/components/ui/Button';
 import { Textarea } from '@/app/components/ui/TextArea';
+import { usePostStore } from '@/app/store/postStore';
 
 type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'frustrated' | 'lonely' | 'amused';
 
@@ -46,6 +47,7 @@ const moodColors: Record<Mood, string> = {
 };
 
 function CreatePostForm() {
+  const { addPost } = usePostStore();
   const [content, setContent] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -168,6 +170,10 @@ function CreatePostForm() {
         toast.error(data.error || 'Failed to create post');
         return;
       }
+
+      const { post: newPost } = await response.json();
+      
+      addPost(newPost);
 
       toast.success('Post created successfully!');
       router.push(`/mood-dashboard/${mood}`);

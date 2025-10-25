@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import PostCard from './PostCard';
 import { postsAPI } from '@/app/utils/api';
+import { usePostStore } from '@/app/store/postStore';
 import toast from 'react-hot-toast';
 
 interface Post {
@@ -30,14 +31,24 @@ interface PostListProps {
 }
 
 export default function PostList({ mood }: PostListProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { posts, setPosts, removePost, loading, setLoading } = usePostStore();
+  const lastFetchedMood = useRef<string | undefined | null>(null);
+  const hasInitialized = useRef(false);
+
+  const filteredPosts = mood 
+    ? posts.filter(post => post.mood === mood)
+    : posts;
 
   useEffect(() => {
-    fetchPosts();
+    if (!hasInitialized.current || lastFetchedMood.current !== mood) {
+      hasInitialized.current = true;
+      lastFetchedMood.current = mood;
+      fetchPosts();
+    }
   }, [mood]);
 
   const fetchPosts = async () => {
+    setLoading(true);
     try {
       const response = mood 
         ? await postsAPI.getPostsByMood(mood)
@@ -52,20 +63,20 @@ export default function PostList({ mood }: PostListProps) {
   };
 
   const handlePostDelete = (postId: string) => {
-    setPosts(posts.filter(post => post.id !== postId));
+    removePost(postId);
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12 sm:py-16 lg:py-20">
+      <div className="min-h-[60vh] flex justify-center items-center">
         <div className="w-8 h-8 sm:w-10 sm:h-10 border-3 border-orange-500/30 border-t-orange-500 rounded-full animate-spin"></div>
       </div>
     );
   }
 
-  if (posts.length === 0) {
+  if (filteredPosts.length === 0) {
     return (
-      <div className="text-center py-12 sm:py-16 lg:py-20">
+      <div className="min-h-[60vh] flex justify-center items-center">
         <p className="text-gray-400 text-sm sm:text-base">
           {mood ? `No posts found for ${mood} mood` : 'No posts found'}
         </p>
@@ -74,8 +85,8 @@ export default function PostList({ mood }: PostListProps) {
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4 lg:space-y-6 pb-6 sm:pb-8">
-      {posts.map((post) => (
+    <div className="space-y-3 sm:space-y-4 lg:space-y-6 pb-6 sm:pb-8 min-h-[60vh]">
+      {filteredPosts.map((post) => (
         <PostCard
           key={post.id}
           post={post}

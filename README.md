@@ -119,36 +119,6 @@ A modern, full-stack social media application for sharing thoughts and emotions 
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 
-
-## 🗄️ Database Schema
-
-### Models
-- **User**: Authentication & profile data
-- **Post**: Content, mood, images, timestamps
-- **Comment**: Nested comments with parent-child relationships
-- **Like**: Many-to-many relationship between users and posts
-
-### Key Features
-- UUID primary keys for security
-- Cascade deletes for data integrity
-- Unique constraints on usernames and emails
-- Optimized indexes for common queries
-
-
-
-## 🔒 Security Features
-
-- ✅ Password hashing with bcrypt
-- ✅ Session-based authentication via NextAuth
-- ✅ CSRF protection on all forms
-- ✅ SQL injection prevention via Prisma
-- ✅ Input validation with Zod schemas
-- ✅ Environment variable protection
-- ✅ Secure HTTP-only cookies
-- ✅ Rate limiting on sensitive endpoints (recommended for production)
-
-
-
 ```
 
 ## 📄 License

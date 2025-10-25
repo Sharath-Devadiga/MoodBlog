@@ -41,7 +41,6 @@ export default function SignInForm() {
       } else if (result?.ok) {
         toast.success('Welcome back!');
         
-        // Wait a moment for session to update, then check if profile exists
         setTimeout(async () => {
           const response = await fetch('/api/auth/session');
           const session = await response.json();

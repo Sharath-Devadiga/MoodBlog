@@ -9,12 +9,14 @@ interface Post {
   user: {
     id: string;
     publicUsername: string;
-    avatarId?: number;
+    avatarId?: string;
+    colorIndex?: number;
   };
   _count?: {
     likes: number;
     comments: number;
   };
+  isLikedByUser?: boolean;
 }
 
 interface PostState {

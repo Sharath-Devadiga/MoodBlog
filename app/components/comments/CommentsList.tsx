@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CommentItem from './CommentItem';
 import CommentForm from './CommentForm';
 import { commentsAPI } from '@/app/utils/api';
+import { useCommentStore } from '@/app/store/commentStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/Card';
 import { Button } from '@/app/components/ui/Button';
 import { MessageCircle } from 'lucide-react';
@@ -34,22 +35,46 @@ export default function CommentList({
   showFullComments = false, 
   maxComments = 3 
 }: CommentListProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { 
+    getPostComments, 
+    setComments, 
+    loading, 
+    setLoading,
+    buildCommentTree 
+  } = useCommentStore();
+  const fetchedRef = useRef(false);
+
+  const comments = buildCommentTree(postId);
 
   useEffect(() => {
-    fetchComments();
+    const cachedComments = getPostComments(postId);
+    if (cachedComments.length === 0 && !fetchedRef.current) {
+      fetchedRef.current = true;
+      fetchComments();
+    } else {
+      setLoading(false);
+    }
   }, [postId]);
 
   const fetchComments = async () => {
+    setLoading(true);
     try {
       const response = await commentsAPI.getComments(postId);
-      setComments(response.data.comments);
+      setComments(postId, response.data.comments);
     } catch (error) {
       toast.error('Failed to load comments');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refetchComments = async () => {
+    try {
+      const response = await commentsAPI.getComments(postId);
+      setComments(postId, response.data.comments);
+    } catch (error) {
+      toast.error('Failed to refresh comments');
     }
   };
 
@@ -69,7 +94,9 @@ export default function CommentList({
     );
   }
 
-  const displayedComments = showFullComments ? comments : comments.slice(0, maxComments);
+  const displayedComments = showFullComments 
+    ? comments.filter(c => c && c.id) 
+    : comments.filter(c => c && c.id).slice(0, maxComments);
   const hasMoreComments = comments.length > maxComments && !showFullComments;
 
   return (
@@ -88,7 +115,6 @@ export default function CommentList({
           {showFullComments && (
             <CommentForm
               postId={postId}
-              onCommentAdded={fetchComments}
             />
           )}
           
@@ -99,7 +125,6 @@ export default function CommentList({
                   key={comment.id}
                   comment={comment}
                   postId={postId}
-                  onUpdate={fetchComments}
                 />
               ))}
               

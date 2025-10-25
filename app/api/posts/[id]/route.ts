@@ -89,16 +89,41 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
     const body = await req.json();
     const { title, content, mood, imageUrl } = body;
 
-    const post = await prisma.post.updateMany({
-      where: { id: postId, userId: user!.id },
-      data: { title, content, mood, imageUrl }
+    const existingPost = await prisma.post.findFirst({
+      where: { id: postId, userId: user!.id }
     });
 
-    if (post.count === 0) {
+    if (!existingPost) {
       return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Post updated successfully!" });
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: { title, content, mood, imageUrl },
+      select: {
+        id: true,
+        content: true,
+        imageUrl: true,
+        mood: true,
+        createdAt: true,
+        user: {
+          select: { 
+            id: true,
+            publicUsername: true, 
+            avatarId: true,
+            colorIndex: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json({ message: "Post updated successfully!", post });
   } catch (e) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

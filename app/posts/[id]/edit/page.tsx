@@ -10,6 +10,7 @@ import { ArrowLeft, Save, Smile, CloudRain, Angry, Zap, Sparkles, Frown, UserX, 
 import { Button } from '@/app/components/ui/Button';
 import { Textarea } from '@/app/components/ui/TextArea';
 import { MOODS } from '@/app/utils/constants';
+import { usePostStore } from '@/app/store/postStore';
 
 type Mood = 'happy' | 'calm' | 'anxious' | 'sad' | 'angry' | 'frustrated' | 'lonely' | 'amused';
 
@@ -59,6 +60,7 @@ interface Post {
 export default function EditPostPage() {
   const params = useParams();
   const postId = params.id as string;
+  const { updatePost } = usePostStore();
   const [content, setContent] = useState('');
   const [selectedMood, setSelectedMood] = useState<Mood>('happy');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -205,6 +207,14 @@ export default function EditPostPage() {
         toast.error(data.error || 'Failed to update post');
         return;
       }
+
+      const { post: updatedPost } = await response.json();
+      
+      updatePost(postId, {
+        content: updatedPost.content,
+        imageUrl: updatedPost.imageUrl,
+        mood: updatedPost.mood,
+      });
 
       toast.success('Post updated successfully!');
       router.push(`/mood-dashboard/${selectedMood}`);

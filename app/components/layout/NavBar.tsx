@@ -54,8 +54,6 @@ export default function Navbar() {
   const handleMoodSelect = (e: React.MouseEvent, moodId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Mood selected:', moodId);
-    console.log('Navigating to:', `/posts/create?mood=${moodId}`);
     router.push(`/posts/create?mood=${moodId}`);
     setTimeout(() => {
       setIsMoodDropdownOpen(false);

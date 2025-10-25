@@ -1,39 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, Heart, Brain, Zap, Users, Lock, Calendar, BarChart3 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sparkles, Heart, Brain, ShieldCheck } from 'lucide-react';
 
 export default function LandingPage() {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 300], [0, 100]);
-  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
-  const opacity = useTransform(scrollY, [0, 200], [1, 0]);
-
   const features = [
     {
       icon: Brain,
       title: 'Emotion-Tagged Posts',
-      description: 'Express yourself with 6 core emotions',
+      description: 'Express yourself with 8 different moods',
       gradient: 'from-orange-500 to-red-500',
     },
     {
-      icon: Heart,
-      title: 'Like & Comment',
-      description: 'Engage with posts that resonate with you',
-      gradient: 'from-red-500 to-pink-500',
+      icon: ShieldCheck,
+      title: '100% Anonymous',
+      description: 'Complete privacy with random usernames',
+      gradient: 'from-emerald-500 to-teal-500',
     },
     {
       icon: Sparkles,
       title: 'Discover by Mood',
-      description: 'Explore posts filtered by emotional states',
-      gradient: 'from-emerald-500 to-teal-500',
+      description: 'Explore posts filtered by emotions',
+      gradient: 'from-purple-500 to-pink-500',
     },
     {
-      icon: Lock,
-      title: 'Safe & Judgment-Free',
-      description: 'Express your true feelings freely',
-      gradient: 'from-teal-500 to-cyan-500',
+      icon: Heart,
+      title: 'Engage & Connect',
+      description: 'Like and comment on posts that resonate',
+      gradient: 'from-red-500 to-rose-500',
     },
   ];
 
@@ -77,8 +72,8 @@ export default function LandingPage() {
       <section className="relative pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
         
-        <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500/20 rounded-full blur-3xl opacity-70" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500/20 rounded-full blur-3xl opacity-70" />
         
         <div className="relative max-w-6xl mx-auto">
           <motion.div
@@ -88,13 +83,15 @@ export default function LandingPage() {
             className="text-center mb-8 sm:mb-12"
           >
             <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 mb-6 sm:mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2.5 sm:py-3 mb-6 sm:mb-8 shadow-lg shadow-emerald-500/20"
             >
-              <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-orange-400" />
-              <span className="text-xs sm:text-sm">Where emotions become connections</span>
+              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
+              <span className="text-sm sm:text-base md:text-lg font-semibold text-emerald-400">
+                100% Anonymous • Express Freely Without Identity
+              </span>
             </motion.div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 leading-tight px-4">
@@ -106,31 +103,23 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-4">
-              MoodBlog transforms daily experiences into emotional expression. Write posts tagged with your mood, 
-              discover content by emotion, and engage with others through likes and comments.
+              Share your daily experiences tagged with emotions. Connect with others through authentic self-expression.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
               <Link
-                href="/signup"
+                href="/explore"
                 prefetch={true}
-                className="group relative w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl font-semibold overflow-hidden hover:shadow-2xl hover:shadow-orange-500/30 transition-all text-sm sm:text-base"
+                className="group relative w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl font-semibold overflow-hidden hover:shadow-2xl hover:shadow-orange-500/30 transition-all text-base sm:text-lg"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  Start Expressing Now
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform" />
+                  Explore MoodBlogs
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-12 transition-transform" />
                 </span>
-              </Link>
-              <Link
-                href="/signin"
-                prefetch={true}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white/5 border border-white/10 rounded-xl font-semibold hover:bg-white/10 transition-all text-sm sm:text-base text-center"
-              >
-                Sign In
               </Link>
             </div>
 
-            <p className="text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6">Free forever • No credit card required</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6">Browse posts without signing up • Sign up to express yourself</p>
           </motion.div>
 
           <motion.div
@@ -142,11 +131,12 @@ export default function LandingPage() {
             {emotions.map((emotion, index) => (
               <motion.div
                 key={emotion.name}
-                initial={{ opacity: 0, scale: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + index * 0.05, type: 'spring', stiffness: 200 }}
-                whileHover={{ scale: 1.1, y: -5 }}
-                className={`${emotion.bg} ${emotion.border} border backdrop-blur-sm px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full flex items-center gap-2 sm:gap-3 hover:shadow-lg ${emotion.glow} transition-all cursor-pointer`}
+                transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                className={`${emotion.bg} ${emotion.border} border backdrop-blur-sm px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full flex items-center gap-2 sm:gap-3 hover:shadow-lg ${emotion.glow} transition-shadow cursor-pointer will-change-transform`}
               >
                 <span className="text-xl sm:text-2xl">{emotion.emoji}</span>
                 <span className="font-medium text-sm sm:text-base">{emotion.name}</span>
@@ -165,28 +155,25 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 sm:mb-12 md:mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
-              Everything you need for
-              <br />
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
               <span className="bg-gradient-to-r from-orange-400 via-rose-400 to-emerald-400 bg-clip-text text-transparent">
-                emotional wellness
+                Why MoodBlog?
               </span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-400 mt-2 sm:mt-4">A complete platform for authentic self-expression</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                whileHover={{ y: -10 }}
-                className="group relative bg-zinc-900 border border-white/10 rounded-2xl p-5 sm:p-6 md:p-8 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/10 transition-all"
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+                whileHover={{ y: -8 }}
+                className="group relative bg-zinc-900 border border-white/10 rounded-2xl p-5 sm:p-6 md:p-8 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/10 transition-all will-change-transform"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`} />
                 <div className={`inline-flex p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br ${feature.gradient} mb-4 sm:mb-6`}>
                   <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
                 </div>
@@ -198,65 +185,26 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-900">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 sm:mb-12 md:mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
-              Simple yet powerful
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-400">Three steps to emotional clarity</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-            {[
-              { step: '01', title: 'Express', desc: 'Write your thoughts and tag with emotions', icon: Brain },
-              { step: '02', title: 'Discover', desc: 'Browse posts filtered by different moods', icon: Sparkles },
-              { step: '03', title: 'Engage', desc: 'Like and comment on posts that resonate', icon: Heart },
-            ].map((item, index) => (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="relative"
-              >
-                <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white/5 mb-3 sm:mb-4">{item.step}</div>
-                <item.icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-emerald-400 mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-2">{item.title}</h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-400">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-950">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4 }}
           className="max-w-4xl mx-auto text-center bg-zinc-900 border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 shadow-xl"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-6">
-            Ready to start your
-            <br />
-            emotional journey?
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 md:mb-6">
+            Start expressing yourself
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-400 mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
-            Join others who are sharing their emotional experiences authentically
+          <p className="text-sm sm:text-base md:text-lg text-gray-400 mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
+            Join anonymously and share your emotions freely
           </p>
           <Link
             href="/signup"
             className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-orange-500 to-rose-500 text-white rounded-xl text-sm sm:text-base md:text-lg font-semibold hover:shadow-2xl hover:shadow-orange-500/30 transition-all"
           >
-            Create Free Account
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+            Get Started Free
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </Link>
         </motion.div>
       </section>

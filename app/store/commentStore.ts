@@ -10,7 +10,8 @@ interface Comment {
   user: {
     id: string;
     publicUsername: string;
-    avatarId?: number;
+    avatarId?: string;
+    colorIndex?: number;
   };
   replies?: Comment[];
 }
@@ -57,22 +58,51 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   
   updateComment: (postId, commentId, content) => set((state) => {
     const postComments = state.comments[postId] || [];
+    
+    const updateNestedComment = (comments: Comment[]): Comment[] => {
+      return comments.map((comment) => {
+        if (comment.id === commentId) {
+          return { ...comment, content };
+        }
+        if (comment.replies && comment.replies.length > 0) {
+          return {
+            ...comment,
+            replies: updateNestedComment(comment.replies)
+          };
+        }
+        return comment;
+      });
+    };
+    
     return {
       comments: {
         ...state.comments,
-        [postId]: postComments.map((comment) =>
-          comment.id === commentId ? { ...comment, content } : comment
-        ),
+        [postId]: updateNestedComment(postComments),
       },
     };
   }),
   
   removeComment: (postId, commentId) => set((state) => {
     const postComments = state.comments[postId] || [];
+    
+    const removeNestedComment = (comments: Comment[]): Comment[] => {
+      return comments
+        .filter((comment) => comment.id !== commentId)
+        .map((comment) => {
+          if (comment.replies && comment.replies.length > 0) {
+            return {
+              ...comment,
+              replies: removeNestedComment(comment.replies)
+            };
+          }
+          return comment;
+        });
+    };
+    
     return {
       comments: {
         ...state.comments,
-        [postId]: postComments.filter((comment) => comment.id !== commentId),
+        [postId]: removeNestedComment(postComments),
       },
     };
   }),
@@ -88,25 +118,28 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   
   buildCommentTree: (postId) => {
     const allComments = get().comments[postId] || [];
+    if (allComments.length === 0) return [];
+    
     const commentMap = new Map<string, Comment>();
     const rootComments: Comment[] = [];
     
-    
     allComments.forEach((comment) => {
-      commentMap.set(comment.id, { ...comment, replies: [] });
+      if (comment && comment.id) {
+        commentMap.set(comment.id, { ...comment, replies: [] });
+      }
     });
     
-    
     allComments.forEach((comment) => {
-      const commentWithReplies = commentMap.get(comment.id)!;
+      if (!comment || !comment.id) return;
+      
+      const commentWithReplies = commentMap.get(comment.id);
+      if (!commentWithReplies) return;
       
       if (comment.parentId) {
         const parent = commentMap.get(comment.parentId);
         if (parent) {
           parent.replies = parent.replies || [];
           parent.replies.push(commentWithReplies);
-        } else {
-          rootComments.push(commentWithReplies);
         }
       } else {
         rootComments.push(commentWithReplies);
