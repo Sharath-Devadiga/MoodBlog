@@ -108,8 +108,8 @@ export default function ExplorePage() {
   };
 
   return (
-    <>
-      <nav className="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur-lg border-b border-white/10 shadow-lg will-change-transform">
+    <div className="bg-zinc-950 min-h-screen">
+      <nav className="fixed top-0 w-full z-50 bg-zinc-900/95 backdrop-blur-lg border-b border-white/10 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-orange-400 via-rose-400 to-emerald-400 bg-clip-text text-transparent">
@@ -131,7 +131,7 @@ export default function ExplorePage() {
         </div>
       </nav>
 
-      <div className="min-h-screen bg-zinc-950 relative">
+      <div className="relative pt-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
         <div className="absolute top-20 left-10 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
@@ -300,6 +300,6 @@ export default function ExplorePage() {
         </motion.div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
