@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import PostCard from './PostCard';
 import { postsAPI } from '@/app/utils/api';
 import { usePostStore } from '@/app/store/postStore';
@@ -32,19 +32,13 @@ interface PostListProps {
 
 export default function PostList({ mood }: PostListProps) {
   const { posts, setPosts, removePost, loading, setLoading } = usePostStore();
-  const lastFetchedMood = useRef<string | undefined | null>(null);
-  const hasInitialized = useRef(false);
 
   const filteredPosts = mood 
     ? posts.filter(post => post.mood === mood)
     : posts;
 
   useEffect(() => {
-    if (!hasInitialized.current || lastFetchedMood.current !== mood) {
-      hasInitialized.current = true;
-      lastFetchedMood.current = mood;
-      fetchPosts();
-    }
+    fetchPosts();
   }, [mood]);
 
   const fetchPosts = async () => {

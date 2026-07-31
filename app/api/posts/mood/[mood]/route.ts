@@ -3,6 +3,7 @@ import { prisma } from "@/app/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { MOODS, MoodType } from "@/app/utils/constants";
+import { rankPosts } from "@/app/lib/utils/ranking";
 
 export async function GET(
   req: NextRequest,
@@ -13,6 +14,12 @@ export async function GET(
     const userId = session?.user?.id;
     const params = await context.params;
     const moodParam = params.mood.toLowerCase();
+
+    const { searchParams } = new URL(req.url);
+    const viewedPostsParam = searchParams.get('viewedPosts');
+    const viewedPosts: Set<string> = viewedPostsParam 
+      ? new Set(JSON.parse(viewedPostsParam)) 
+      : new Set();
 
     const validMood = MOODS.some((mood) => mood.value === moodParam);
     if (!validMood) {
@@ -26,12 +33,15 @@ export async function GET(
       where: {
         mood: moodParam as MoodType,
       },
+      take: 100,
+      orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         content: true,
         imageUrl: true,
         mood: true,
         createdAt: true,
+        userId: true,
         user: {
           select: {
             id: true,
@@ -46,51 +56,22 @@ export async function GET(
             comments: true,
           },
         },
-        likes: userId ? {
-          where: {
-            userId: userId
-          },
+        likes: {
           select: {
-            id: true
+            userId: true
           }
-        } : false,
-        comments: userId ? {
-          where: {
-            userId: userId
-          },
+        },
+        comments: {
           select: {
-            id: true
+            userId: true
           }
-        } : false
+        }
       }
     });
 
-    const postsWithScore = posts.map(post => {
-      const now = new Date();
-      const postAge = (now.getTime() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60);
-      
-      const likeCount = post._count.likes;
-      const commentCount = post._count.comments;
-      
-      const engagementScore = 
-        (likeCount * 2) +
-        (commentCount * 3) +
-        (1 / (postAge + 1)) * 25;
+    const rankedPosts = rankPosts(posts, userId, viewedPosts);
 
-      return {
-        ...post,
-        isLikedByUser: userId ? post.likes && post.likes.length > 0 : false,
-        engagementScore,
-        likes: undefined,
-        comments: undefined
-      };
-    });
-
-    const sortedPosts = postsWithScore.sort((a, b) => b.engagementScore - a.engagementScore);
-
-    const finalPosts = sortedPosts.map(({ engagementScore, ...post }) => post);
-
-    return NextResponse.json({ posts: finalPosts });
+    return NextResponse.json({ posts: rankedPosts });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },

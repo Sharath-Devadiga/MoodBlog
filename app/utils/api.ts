@@ -30,12 +30,12 @@ export const authAPI = {
 };
 
 export const postsAPI = {
-  getAllPosts: () => api.get('/posts'),
+  getAllPosts: () => api.get(`/posts?t=${Date.now()}`),
   getPost: (id: string) => api.get(`/posts/${id}`),
   createPost: (data: PostData) => api.post('/posts', data),
   updatePost: (id: string, data: PostData) => api.put(`/posts/${id}`, data),
   deletePost: (id: string) => api.delete(`/posts/${id}`),
-  getPostsByMood: (mood: string) => api.get(`/posts/mood/${mood}`),
+  getPostsByMood: (mood: string) => api.get(`/posts/mood/${mood}?t=${Date.now()}`),
   toggleLike: (id: string) => api.post(`/posts/${id}/like`),
   getLikeStatus: (id: string) => api.get(`/posts/${id}/like?user=true`),
   getLikeCount: (id: string) => api.get(`/posts/${id}/like`),
